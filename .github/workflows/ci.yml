@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   quality-checks:
-    name: Lint,typecheck,test
+    name: quality checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
