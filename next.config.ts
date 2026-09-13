@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
         pathname: "/**",
         // searchは指定しない
       },
+      {
+        protocol: "https",
+        hostname: "images.microcms-assets.io",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };

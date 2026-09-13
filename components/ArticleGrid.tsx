@@ -1,23 +1,36 @@
+// components/ArticleGrid.tsx
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import type { Article } from "@/lib/types";
 import { ArticleCard } from "./ArticleCard";
+
 const INITIAL_COUNT = 2;
 
-export function ArticleGrid() {
+type ArticleGridProps = {
+  fetchUrl: string;
+  initialCount?: number;
+  moreHref?: string;
+};
+
+export function ArticleGrid({
+  fetchUrl,
+  initialCount = INITIAL_COUNT,
+  moreHref,
+}: ArticleGridProps) {
   const [articles, setArticles] = useState<Article[]>([]);
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    fetch(
-      "https://qiita.com/api/v2/items?query=user:takahiro_honda&per_page=20",
-    )
+    fetch(fetchUrl)
       .then((res) => res.json())
       .then((data: Article[]) => setArticles(data));
-  }, []);
+  }, [fetchUrl]);
 
-  const visibleArticles = showAll ? articles : articles.slice(0, INITIAL_COUNT);
+  const visibleArticles = showAll ? articles : articles.slice(0, initialCount);
+  const hasMore = !showAll && articles.length > initialCount;
+
   return (
     <div className="flex flex-cols-1 gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -25,14 +38,19 @@ export function ArticleGrid() {
           <ArticleCard key={article.url} article={article} />
         ))}
       </div>
-      {!showAll && articles.length > INITIAL_COUNT && (
-        <button
-          className="btn btn-outline self-center"
-          onClick={() => setShowAll(true)}
-        >
-          もっと見る
-        </button>
-      )}
+      {hasMore &&
+        (moreHref ? (
+          <Link href={moreHref} className="btn btn-outline self-center">
+            もっと見る
+          </Link>
+        ) : (
+          <button
+            className="btn btn-outline self-center"
+            onClick={() => setShowAll(true)}
+          >
+            もっと見る
+          </button>
+        ))}
     </div>
   );
 }

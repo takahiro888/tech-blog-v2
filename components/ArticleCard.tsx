@@ -1,14 +1,16 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Article } from "../lib/types";
 import { FALLBACK_THUMBNAIL } from "../lib/constants";
-import Link from "next/link";
 
 export function ArticleCard({ article }: { article: Article }) {
+  const isExternal = article.url.startsWith("http");
+
   return (
     <Link
       href={article.url}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
       className="card bg-base-100 shadow-md transition-shadow hover:shadow-xl"
     >
       <figure>
