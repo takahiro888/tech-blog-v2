@@ -7,9 +7,9 @@
 - リポジトリ: [immortal-architecture-mvp](https://github.com/YukiOnishi1129/immortal-architecture-mvp)
 - 記事: [Next.js App Router アーキテクチャの設計思想](https://zenn.dev/yukionishi/articles/cd79e39ea6c172)
 
-参考元が採用している「2層のドキュメント体系（プロダクト全体の設計 / フロントエンド実装の設計）」と、「`app/`を薄く保ち、`features/`がドメイン単位の司令塔、`external/`が外部接続点になる」というレイヤー分離の思想を、本プロジェクトの規模（認証・DBを持たず、microCMSをヘッドレスCMSとして利用する読み取り主体のブログ）に合わせて採用しています。参考リポジトリと同じく、アプリ本体は`frontend/`サブディレクトリへ移動する方針も採用しています（[frontend/05_development_guide.md](./frontend/05_development_guide.md)のフェーズ0参照）。
+参考元が採用している「2層のドキュメント体系（プロダクト全体の設計 / フロントエンド実装の設計）」と、「`app/`を薄く保ち、`features/`がドメイン単位の司令塔、`external/`が外部接続点になる」というレイヤー分離の思想を、本プロジェクトの規模（認証・DBを持たず、microCMSをヘッドレスCMSとして利用する読み取り主体のブログ）に合わせて採用しています。参考リポジトリと同じく、アプリ本体は`frontend/`サブディレクトリへ移動する方針も採用しています（[frontend/05_development_guide.md](../frontend/docs/05_development_guide.md)のフェーズ0参照）。
 
-> **現在の配置について**: この`docs/frontend/`は、`frontend/`ディレクトリへの移動作業（フェーズ0）が完了した時点で`frontend/docs/`へ移動する想定です。移動作業が完了するまでは、一時的にリポジトリ直下の`docs/frontend/`に置いています。
+> **現在の状態**: `frontend/`ディレクトリへの移動作業（フェーズ0）は完了済みです。フロントエンド実装の設計ドキュメントは`frontend/docs/`に置かれています。次はフェーズ1（`frontend/`内部の`external/`・`features/`への再編）です。
 
 ## ドキュメント構成
 
@@ -25,11 +25,11 @@
 
 | # | ドキュメント | 内容 |
 |---|---|---|
-| 01 | [tech_stack.md](./frontend/01_tech_stack.md) | 技術スタック |
-| 02 | [architecture.md](./frontend/02_architecture.md) | レイヤー分離の設計思想 |
-| 03 | [directory_structure.md](./frontend/03_directory_structure.md) | ディレクトリ構成（Before/After） |
-| 04 | [data_fetching_policy.md](./frontend/04_data_fetching_policy.md) | データ取得方針（Server-first） |
-| 05 | [development_guide.md](./frontend/05_development_guide.md) | 移行手順・コーディング規約 |
+| 01 | [tech_stack.md](../frontend/docs/01_tech_stack.md) | 技術スタック |
+| 02 | [architecture.md](../frontend/docs/02_architecture.md) | レイヤー分離の設計思想 |
+| 03 | [directory_structure.md](../frontend/docs/03_directory_structure.md) | ディレクトリ構成（Before/After） |
+| 04 | [data_fetching_policy.md](../frontend/docs/04_data_fetching_policy.md) | データ取得方針（Server-first） |
+| 05 | [development_guide.md](../frontend/docs/05_development_guide.md) | 移行手順・コーディング規約 |
 
 ## 運用方針
 

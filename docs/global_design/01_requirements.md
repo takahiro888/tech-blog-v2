@@ -56,7 +56,7 @@
 
 ## 非機能要件
 
-- コンテンツソースはmicroCMSのみとする。Qiitaからの記事取得は当初予定していたが、**スコープ外とする**（既存の`app/api/qiita/route.ts`等は撤去対象。詳細は[frontend/05_development_guide.md](../frontend/05_development_guide.md)参照）。
+- コンテンツソースはmicroCMSのみとする。Qiitaからの記事取得は当初予定していたが、**スコープ外とする**（既存の`app/api/qiita/route.ts`等は撤去対象。詳細は[frontend/05_development_guide.md](../../frontend/docs/05_development_guide.md)参照）。
 - 認証機能は持たない（読み取り専用の公開ブログ）。
 - 独自DBは持たない（microCMSをデータソースとする）。
 - レスポンシブ対応（PC・タブレット・スマートフォン）。

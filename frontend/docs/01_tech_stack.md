@@ -17,7 +17,7 @@
 ## データソース
 
 - microCMS（`microcms-js-sdk`）— ブログ記事のヘッドレスCMS
-- ~~Qiita API~~ — スコープ外（[global_design/01_requirements.md](../global_design/01_requirements.md)参照）
+- ~~Qiita API~~ — スコープ外（[global_design/01_requirements.md](../../docs/global_design/01_requirements.md)参照）
 
 ## テスト
 

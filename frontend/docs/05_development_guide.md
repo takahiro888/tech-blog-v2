@@ -2,64 +2,23 @@
 
 ## 前提
 
-このドキュメント群は設計方針を示すものであり、**実装（コードの変更）はご自身で行ってください**。このドキュメント作成時点では、コードの直接編集は行わず、方針とコード例の提示に留めています。
+このドキュメント群は設計方針を示すものであり、**アプリケーションのロジック実装はご自身で行ってください**（学習目的のため）。ファイル・ディレクトリの機械的な移動やCI設定の更新など、コーディングを伴わない構成変更については依頼があれば代行します。方針とコード例の提示に留める範囲と、代行した範囲は各フェーズの記載を参照してください。
 
 ## 移行チェックリスト
 
 現状のコードから目標構成（[03_directory_structure.md](./03_directory_structure.md)）へ移行する際の推奨順序。**「構造を先に固めてから、中身（microCMSの拡張フィールドやデザインの作り込み）は後から」**という方針で進める。この間、サイドバーやカードは`03_content_model.md`の拡張フィールドがまだ無い前提で、仮データ・仮スタイルで組んでおき、後続フェーズで本来のデータに差し替える。
 
-### フェーズ0: リポジトリ構成の変更（`frontend/`への移動）
+### フェーズ0: リポジトリ構成の変更（`frontend/`への移動）✅ 完了
+
+アプリ本体一式・`docs/frontend/`・`.github/workflows/ci.yml`の移動/更新は実施済み。以下は実施した内容の記録。
 
 参考リポジトリと同じく、アプリ本体一式を`frontend/`サブディレクトリへ移動する。他のどのステップよりも先に、単独のコミットとして行うことを推奨する（他の変更と混ざると差分が読みにくくなるため）。
 
-1. アプリ本体のファイル・ディレクトリを`frontend/`配下へ移動する（`git mv`推奨。移動元・移動先のイメージ）
-
-   ```bash
-   mkdir frontend
-   git mv app frontend/app
-   git mv components frontend/components
-   git mv lib frontend/lib
-   git mv tests frontend/tests
-   git mv public frontend/public
-   git mv package.json frontend/package.json
-   git mv package-lock.json frontend/package-lock.json
-   git mv next.config.ts frontend/next.config.ts
-   git mv tsconfig.json frontend/tsconfig.json
-   git mv vitest.config.ts frontend/vitest.config.ts
-   git mv eslint.config.mjs frontend/eslint.config.mjs
-   git mv postcss.config.mjs frontend/postcss.config.mjs
-   git mv next-env.d.ts frontend/next-env.d.ts
-   git mv .env frontend/.env
-   git mv .nvmrc frontend/.nvmrc
-   git mv docs/frontend frontend/docs
-   ```
-
-   `docs/global_design/`はリポジトリ直下に残す。
-
-2. `.github/workflows/ci.yml`を更新し、`frontend/`ディレクトリ内でコマンドを実行するようにする
-
-   ```yaml
-   - name: Install dependencies
-     working-directory: frontend
-     run: npm ci
-
-   - name: Lint
-     working-directory: frontend
-     run: npm run lint
-
-   - name: Typecheck
-     working-directory: frontend
-     run: npm run typecheck
-
-   - name: Test
-     working-directory: frontend
-     run: npm run test:run
-   ```
-
-   `actions/setup-node`の`cache: "npm"`を使い続ける場合は、`cache-dependency-path: frontend/package-lock.json`の指定も必要になる。
-
-3. デプロイ先（Vercel等）のRoot Directory設定を`frontend`に変更する
-4. 移動後、`npm run dev` / `npm run build` / `npm run test:run`がすべて`frontend/`内で問題なく動くことを確認する
+1. ✅ アプリ本体のファイル・ディレクトリを`frontend/`配下へ移動（`git mv`。トラッキング対象外の`node_modules` / `.env` / `next-env.d.ts`は`mv`で移動、`.next`・`tsconfig.tsbuildinfo`はビルドキャッシュのため削除して再生成に委ねた）
+2. ✅ `.github/workflows/ci.yml`を更新し、`frontend/`ディレクトリ内でコマンドを実行するように変更（`working-directory: frontend`を各ステップに追加、`cache-dependency-path: frontend/package-lock.json`も指定）
+3. ✅ `frontend/.gitignore`を新規作成 — ルートの`.gitignore`は`/node_modules`・`/.next/`等が**ルート起点のパターン**のため、`frontend/`配下には効かない。同等のルールを`frontend/.gitignore`に追加した
+4. ⬜ デプロイ先（Vercel等）のRoot Directory設定を`frontend`に変更する（ダッシュボード側の操作のため未実施、各自対応）
+5. ⬜ `frontend/`ディレクトリ内で`npm run dev` / `npm run build` / `npm run test:run`が問題なく動くことを確認する（未実施、各自確認）
 
 ### フェーズ1: ディレクトリ構造の再編（`frontend/`内部の整理）
 
