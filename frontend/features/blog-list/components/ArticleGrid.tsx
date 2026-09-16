@@ -1,4 +1,4 @@
-// components/ArticleGrid.tsx
+// features/blog-list/components/ArticleGrid.tsx
 "use client";
 
 import { useState, useEffect } from "react";

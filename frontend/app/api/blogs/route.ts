@@ -1,5 +1,5 @@
 import { FALLBACK_THUMBNAIL } from "@/lib/constants";
-import { getBlogList } from "@/lib/microcms";
+import { getBlogList } from "@/external/microcms/blogs";
 import { Article } from "@/lib/types";
 
 export async function GET() {

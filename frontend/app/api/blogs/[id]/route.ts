@@ -1,4 +1,4 @@
-import { getBlogDetail } from "@/lib/microcms";
+import { getBlogDetail } from "@/external/microcms/blogs";
 
 export async function GET(
   _request: Request,

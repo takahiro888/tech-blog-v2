@@ -1,4 +1,4 @@
-import { ArticleGrid } from "../components/ArticleGrid";
+import { ArticleGrid } from "@/features/blog-list";
 
 export default function Home() {
   return (
