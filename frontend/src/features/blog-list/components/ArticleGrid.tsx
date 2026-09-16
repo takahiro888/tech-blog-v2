@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import type { Article } from "@/lib/types";
+import type { Article } from "@/shared/lib/types";
 import { ArticleCard } from "./ArticleCard";
 
 const INITIAL_COUNT = 2;

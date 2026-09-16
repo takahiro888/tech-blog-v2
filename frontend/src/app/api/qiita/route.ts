@@ -1,5 +1,5 @@
-import { FALLBACK_THUMBNAIL } from "@/lib/constants";
-import type { Article } from "../../../lib/types";
+import { FALLBACK_THUMBNAIL } from "@/shared/lib/constants";
+import type { Article } from "@/shared/lib/types";
 
 const QIITA_ITEMS_URL = "https://qiita.com/api/v2/items";
 

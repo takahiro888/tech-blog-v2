@@ -6,6 +6,10 @@
 
 この移動は`.github/workflows/ci.yml`（現在リポジトリ直下で`npm ci`等を実行している）とVercelのRoot Directory設定の変更を伴う。詳細な手順は[05_development_guide.md](./05_development_guide.md)のステップ0を参照。
 
+### 訂正: `frontend/src/`への集約
+
+当初のこのドキュメントでは`frontend/`直下に`app/` `external/` `features/` `lib/`を並べる構成にしていたが、参考リポジトリを実際に確認したところ、`frontend/src/`配下に`app/` `external/` `features/` `shared/`をまとめる構成だったため、本プロジェクトもこれに合わせて修正した。`shared/`は「特定機能に依存しない共通コード」を置く層で、本プロジェクトの`lib/`（`constants.ts` / `types.ts` / `sample-articles.ts`）はここに含める。Next.js公式も`src/`配下にアプリコードをまとめる構成をサポートしており、`public/`・`package.json`・`next.config.ts`・`tsconfig.json`・`.env`はリポジトリ（`frontend/`）直下に残し、`tsconfig.json`の`paths`（`@/*`）を`./src/*`基準に変更する。
+
 ## 現状（リポジトリ直下にアプリが直接置かれている）
 
 ```
@@ -46,50 +50,51 @@ compose.yml                      … 現状不要（参考リポジトリはDB�
 frontend/                        … アプリ本体一式をここに移動
   package.json
   next.config.ts
-  tsconfig.json
+  tsconfig.json                  … paths の @/* を ./src/* に変更
   vitest.config.ts
   .env
+  public/
   docs/                          … 本ドキュメント群の移動先（旧 docs/frontend/）
     01_tech_stack.md
     02_architecture.md
     03_directory_structure.md
     04_data_fetching_policy.md
     05_development_guide.md
-  app/
-    layout.tsx
-    page.tsx                     … トップページ（Server Component、featuresを組み立てるだけ）
-    blogs/
-      page.tsx                   … 記事一覧ページ
-      [id]/page.tsx               … 記事詳細ページ
-    about/
-      page.tsx                   … このブログについて（新規）
-  components/                    … 汎用UI（特定機能に依存しない部品）
-    Header.tsx
-    Footer.tsx
-  features/
-    blog-list/
-      components/
-        ArticleCard.tsx
-        ArticleGrid.tsx
-        CategoryFilter.tsx
-      index.ts                   … このfeatureの公開インターフェース
-    blog-detail/
-      components/
-        ArticleBody.tsx
-    sidebar/
-      components/
-        AuthorCard.tsx
-        TopicsList.tsx
-        ArchiveList.tsx
-        SearchBox.tsx
-  external/
-    microcms/
-      client.ts                  … createClientのみ
-      blogs.ts                   … getBlogList / getBlogDetail
-      types.ts                   … microCMSのレスポンス型
-  lib/
-    types.ts                     … アプリ内で使うドメイン寄りの型（Article等）
-    constants.ts
+  src/
+    app/
+      layout.tsx
+      page.tsx                   … トップページ（Server Component、featuresを組み立てるだけ）
+      blogs/
+        page.tsx                 … 記事一覧ページ
+        [id]/page.tsx             … 記事詳細ページ
+      about/
+        page.tsx                 … このブログについて（新規）
+    features/
+      blog-list/
+        components/
+          ArticleCard.tsx
+          ArticleGrid.tsx
+          CategoryFilter.tsx
+        index.ts                 … このfeatureの公開インターフェース
+      blog-detail/
+        components/
+          ArticleBody.tsx
+      sidebar/
+        components/
+          AuthorCard.tsx
+          TopicsList.tsx
+          ArchiveList.tsx
+          SearchBox.tsx
+    external/
+      microcms/
+        client.ts                … createClientのみ
+        blogs.ts                 … getBlogList / getBlogDetail
+        types.ts                 … microCMSのレスポンス型
+    shared/                      … 特定機能に依存しない共通コード
+      lib/
+        types.ts                 … アプリ内で使うドメイン寄りの型（Article等）
+        constants.ts
+      components/                … 汎用UI（Header/Footer等、必要になったら追加）
 ```
 
 `compose.yml`は参考リポジトリではPostgres（Drizzle用）を起動するためのものだが、本プロジェクトはDBを持たずmicroCMSのみを利用するため作成しない。この点は「構造を完全に一致させる」のではなく「意味のある部分だけを再現する」という判断。
@@ -100,9 +105,10 @@ frontend/                        … アプリ本体一式をここに移動
 |---|---|---|
 | リポジトリ直下の `app/` `components/` `lib/` `package.json` 等一式 | `frontend/` 配下 | アプリ本体を`frontend/`サブディレクトリへ移動（参考リポジトリと同じ構成）。`.github/workflows/ci.yml`・Vercelのroot directory設定の変更を伴う |
 | `docs/frontend/` | `frontend/docs/` | 本ドキュメント群の置き場所。`docs/global_design/`はリポジトリ直下のまま維持 |
-| `lib/microcms.ts` | `frontend/external/microcms/client.ts` + `frontend/external/microcms/blogs.ts` | クライアント生成とAPI呼び出しを分離 |
-| `components/ArticleCard.tsx` | `features/blog-list/components/ArticleCard.tsx` | 記事一覧機能に紐づくため移動 |
-| `components/ArticleGrid.tsx` | `features/blog-list/components/ArticleGrid.tsx` | 同上。`useEffect`+`fetch`のクライアント取得をやめ、Server Componentからpropsでデータを受け取る形に変更（詳細は[04_data_fetching_policy.md](./04_data_fetching_policy.md)） |
+| `app/` `external/` `features/` | `src/app/` `src/external/` `src/features/` | 参考リポジトリに合わせて`src/`配下へ集約（訂正） |
+| `lib/` | `src/shared/lib/` | `lib/microcms.ts`は`src/external/microcms/client.ts` + `blogs.ts`に分割。`types.ts`・`constants.ts`・`sample-articles.ts`は`src/shared/lib/`へ移動 |
+| `components/ArticleCard.tsx` | `src/features/blog-list/components/ArticleCard.tsx` | 記事一覧機能に紐づくため移動 |
+| `components/ArticleGrid.tsx` | `src/features/blog-list/components/ArticleGrid.tsx` | 同上。`useEffect`+`fetch`のクライアント取得をやめ、Server Componentからpropsでデータを受け取る形に変更（詳細は[04_data_fetching_policy.md](./04_data_fetching_policy.md)） |
 | `app/api/blogs/route.ts` | 廃止 | Server Componentから`external/microcms/blogs.ts`を直接呼べるため、内部中継用のAPI Routeは不要になる |
 | `app/api/blogs/[id]/route.ts` | 廃止 | 同上（`app/blogs/[id]/page.tsx`は既に`getBlogDetail`を直接呼んでおり、この形に統一する） |
 | `app/api/qiita/route.ts` | 削除 | Qiita連携はスコープ外化のため |
@@ -130,10 +136,10 @@ export function getBlogDetail(contentId: string) {
 }
 ```
 
-移行イメージ（`external/microcms/client.ts` + `external/microcms/blogs.ts`）:
+移行イメージ（`src/external/microcms/client.ts` + `src/external/microcms/blogs.ts`）:
 
 ```ts
-// external/microcms/client.ts
+// src/external/microcms/client.ts
 import { createClient } from "microcms-js-sdk";
 
 export const microcmsClient = createClient({
@@ -143,7 +149,7 @@ export const microcmsClient = createClient({
 ```
 
 ```ts
-// external/microcms/blogs.ts
+// src/external/microcms/blogs.ts
 import { microcmsClient } from "./client";
 import type { Blog } from "./types";
 

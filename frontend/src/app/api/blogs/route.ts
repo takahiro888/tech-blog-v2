@@ -1,6 +1,6 @@
-import { FALLBACK_THUMBNAIL } from "@/lib/constants";
+import { FALLBACK_THUMBNAIL } from "@/shared/lib/constants";
 import { getBlogList } from "@/external/microcms/blogs";
-import { Article } from "@/lib/types";
+import { Article } from "@/shared/lib/types";
 
 export async function GET() {
   const { contents } = await getBlogList();

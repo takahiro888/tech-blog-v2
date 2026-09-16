@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Article } from "@/lib/types";
-import { FALLBACK_THUMBNAIL } from "@/lib/constants";
+import type { Article } from "@/shared/lib/types";
+import { FALLBACK_THUMBNAIL } from "@/shared/lib/constants";
 
 export function ArticleCard({ article }: { article: Article }) {
   const isExternal = article.url.startsWith("http");
