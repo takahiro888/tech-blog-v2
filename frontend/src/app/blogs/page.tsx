@@ -1,10 +1,13 @@
+import { getBlogList } from "@/external/microcms/blogs";
 import { ArticleGrid } from "@/features/blog-list";
 
-export default function BlogsPage() {
+export default async function BlogsPage() {
+  const { contents } = await getBlogList();
+
   return (
     <div className="flex flex-col flex-1 gap-6 p-8">
       <h1 className="text-2xl font-bold">ブログ記事一覧</h1>
-      <ArticleGrid fetchUrl="/api/blogs" initialCount={Infinity} />
+      <ArticleGrid articles={contents} initialCount={Infinity} />
     </div>
   );
 }
