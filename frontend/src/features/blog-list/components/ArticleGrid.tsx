@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Blog } from "@/external/microcms/types";
 import { ArticleCard } from "./ArticleCard";
 
-const INITIAL_COUNT = 2;
+const INITIAL_COUNT = 4;
 
 type ArticleGridProps = {
   articles: Blog[];
