@@ -69,6 +69,8 @@ frontend/                        … アプリ本体一式をここに移動
         [id]/page.tsx             … 記事詳細ページ
       about/
         page.tsx                 … このブログについて（新規）
+      profile/
+        page.tsx                 … プロフィール（新規、内部ページ）
     features/
       blog-list/
         components/
@@ -79,6 +81,9 @@ frontend/                        … アプリ本体一式をここに移動
       blog-detail/
         components/
           ArticleBody.tsx
+      profile/
+        components/
+          ProfileBody.tsx        … 本文（ArticleBodyのスタイルを共用してもよい）
       sidebar/
         components/
           AuthorCard.tsx
@@ -89,6 +94,7 @@ frontend/                        … アプリ本体一式をここに移動
       microcms/
         client.ts                … createClientのみ
         blogs.ts                 … getBlogList / getBlogDetail
+        profile.ts               … getProfile（オブジェクト形式のprofile）
         types.ts                 … microCMSのレスポンス型
     shared/                      … 特定機能に依存しない共通コード
       lib/

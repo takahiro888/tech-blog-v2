@@ -23,6 +23,7 @@
 |---|---|---|---|
 | `getBlogList()` | 全記事の取得（トップ・一覧・サイドバー集計） | なし（将来: `limit` `offset`） | `Article[]`（公開日降順） |
 | `getBlogDetail(id)` | 記事1件の取得 | `id: string` | `Article`。存在しなければ`notFound`を呼び出し側で扱う |
+| `getProfile()` | 著者情報の取得（`/profile`と全ページのサイドバー著者カード） | なし | `Author`（`profile`はオブジェクト形式のため`getObject`で取得） |
 
 ### 取得方針
 
@@ -43,7 +44,7 @@
 | 記事一覧 | GET | `https://{serviceDomain}.microcms.io/api/v1/blogs` | リスト形式のAPI |
 | 記事詳細 | GET | `https://{serviceDomain}.microcms.io/api/v1/blogs/{contentId}` | |
 | カテゴリ一覧（任意） | GET | `.../api/v1/categories` | `categories`を独立コンテンツにした場合のみ |
-| プロフィール（任意） | GET | `.../api/v1/profile` | オブジェクト形式。定数管理なら不要 |
+| プロフィール | GET | `.../api/v1/profile` | オブジェクト形式（1件のみ）。`/profile`と著者カードで使用 |
 
 実際の呼び出しは`microcms-js-sdk`（`getList` / `getListDetail`）を使う。
 
@@ -105,7 +106,7 @@
 
 - 本文HTMLは`dangerouslySetInnerHTML`で描画するため、**サニタイズ**を通す（許可タグを絞る）。入稿者は本人だが、防御を一段入れておく
 - APIキーをクライアントバンドルに含めない（`external/`はサーバー専用。`server-only`パッケージでの保護を検討）
-- 外部リンク（プロフィール）は`rel="noopener noreferrer"`
+- 外部リンク（SNS）は`rel="noopener noreferrer"`、新規タブで開く
 
 ## 5. 再検証（キャッシュ更新）
 

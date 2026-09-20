@@ -44,6 +44,10 @@
 6. **カテゴリフィルタ・検索の実装**
    - まずはクライアント側フィルタ（案A）で実装し、動作確認後に必要であれば案B（URL `searchParams`）へ移行
 7. **`/about` ページの新規作成**
+8. **`/profile` ページの新規作成**
+   - microCMSに`profile`（オブジェクト形式）を作成し、`external/microcms/profile.ts`に`getProfile`を追加
+   - `app/profile/page.tsx`（パンくず＋タイトル＋メイン画像＋本文＋サイドバー）を実装し、ヘッダーのナビ・著者カードのリンクを`/profile`（内部リンク）にする
+   - 仕様は`docs/global_design/04_ui_design.md`の「プロフィールページ」を参照
 
 各ステップごとにコミットを分けると、後から見直しやすくなる。
 

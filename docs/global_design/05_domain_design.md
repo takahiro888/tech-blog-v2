@@ -15,7 +15,8 @@
 |---|---|---|
 | Article | 記事1件。ブログの中心 | id, title, excerpt, body, categories[], card, readingMinutes, publishedAt, eyecatch? |
 | Category | 記事の分類 | id, name, slug |
-| Author | 著者（表示用の情報。単一） | name, role, bio, avatarUrl?, profileUrl |
+| Author | 著者（サイト全体で1人）。著者カードと`/profile`の元になる | name, role, bio, avatarUrl?, snsLinks[], profileImageUrl?, profileBody |
+| SnsLink | 著者のSNSへの外部リンク（Authorの一部） | type（`github` / `x` など）, url |
 
 ## 値オブジェクト（VO）
 
@@ -34,7 +35,8 @@
 ```
 [Article] ──has many──> [Category]      … 記事は複数カテゴリを持てる（0件も可）
 [Article] ──has──> [ArticleCardStyle]   … 表示用の装飾情報（VO）
-[Author]                                … 記事とは関連付けない（サイト全体で1人）
+[Author] ──has many──> [SnsLink]         … 著者はSNSリンクを持つ
+[Author]                                … 記事とは関連付けない（サイト全体で1人）。`/profile`の本文（HTML）も保持する
 ```
 
 | 項目 | 内容 |
