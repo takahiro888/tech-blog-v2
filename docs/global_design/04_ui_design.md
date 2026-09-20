@@ -257,7 +257,7 @@
 
 | UI部品 | 置き場所（想定） | 種別 |
 |---|---|---|
-| Header / Footer / ScrollTopButton | `shared/components/` | Header・Footerは Server、ScrollTopは Client |
+| Header / Footer / ScrollTopButton | `shared/components/layout/` | Header・Footerは Server、ScrollTopは Client |
 | Hero | `features/home/components/` | Server |
 | ArticleCard / ArticleThumbnail / ArticleGrid | `features/blog-list/components/` | Card・Thumbnailは Server、Gridは Client（もっと見る・絞り込み） |
 | CategoryFilter / SearchBox | `features/blog-list/components/` | Client |

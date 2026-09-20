@@ -100,7 +100,9 @@ frontend/                        … アプリ本体一式をここに移動
       lib/
         types.ts                 … アプリ内で使うドメイン寄りの型（Article等）
         constants.ts
-      components/                … 汎用UI（Header/Footer等、必要になったら追加）
+      components/
+        layout/                  … ページの枠組みになる部品（Header / Footer 等）。Server Component中心。
+                                   Client化が必要な最小単位（NavLink等）もここにフラットに置く
 ```
 
 `compose.yml`は参考リポジトリではPostgres（Drizzle用）を起動するためのものだが、本プロジェクトはDBを持たずmicroCMSのみを利用するため作成しない。この点は「構造を完全に一致させる」のではなく「意味のある部分だけを再現する」という判断。
