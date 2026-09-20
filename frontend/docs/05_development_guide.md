@@ -6,7 +6,7 @@
 
 ## 移行チェックリスト
 
-現状のコードから目標構成（[03_directory_structure.md](./03_directory_structure.md)）へ移行する際の推奨順序。**「構造を先に固めてから、中身（microCMSの拡張フィールドやデザインの作り込み）は後から」**という方針で進める。この間、サイドバーやカードは`03_content_model.md`の拡張フィールドがまだ無い前提で、仮データ・仮スタイルで組んでおき、後続フェーズで本来のデータに差し替える。
+現状のコードから目標構成（[03_directory_structure.md](./03_directory_structure.md)）へ移行する際の推奨順序。**「構造を先に固めてから、中身（microCMSの拡張フィールドやデザインの作り込み）は後から」**という方針で進める。この間、サイドバーやカードは`docs/global_design/06_06_content_model.md`の拡張フィールドがまだ無い前提で、仮データ・仮スタイルで組んでおき、後続フェーズで本来のデータに差し替える。
 
 ### フェーズ0: リポジトリ構成の変更（`frontend/`への移動）✅ 完了
 
@@ -36,7 +36,7 @@
 
 ### フェーズ2: 中身の実装（構造が固まった後）
 
-4. **microCMSスキーマ拡張とcontent_model.mdの反映**
+4. **microCMSスキーマ拡張と06_content_model.mdの反映**
    - `excerpt` / `categories` / `cardLabel` / `cardCaption` / `cardTheme` / `readingMinutes` をmicroCMS側に追加し、`external/microcms/types.ts`に反映
 5. **サイドバー機能の実装**
    - `features/sidebar/` にAuthorCard / TopicsList / ArchiveList / SearchBoxを実装

@@ -18,8 +18,12 @@
 | # | ドキュメント | 内容 |
 |---|---|---|
 | 01 | [requirements.md](./global_design/01_requirements.md) | 要件定義 |
-| 02 | [screens.md](./global_design/02_screens.md) | 画面設計（モック準拠） |
-| 03 | [content_model.md](./global_design/03_content_model.md) | microCMSのコンテンツモデル設計 |
+| 02 | [use_cases.md](./global_design/02_use_cases.md) | ユースケース（読者・運営者） |
+| 03 | [ubiquitous_language.md](./global_design/03_ubiquitous_language.md) | ユビキタス言語一覧 |
+| 04 | [ui_design.md](./global_design/04_ui_design.md) | UI設計（画面・コンポーネント・レスポンシブ） |
+| 05 | [domain_design.md](./global_design/05_domain_design.md) | ドメイン設計（エンティティ・純粋なルール） |
+| 06 | [content_model.md](./global_design/06_content_model.md) | microCMSのコンテンツモデル設計（DB設計書に相当） |
+| 07 | [api_design.md](./global_design/07_api_design.md) | API設計（microCMS利用仕様・内部インターフェース） |
 
 ### `frontend/` - フロントエンド実装の設計
 
@@ -35,4 +39,4 @@
 
 - これらのドキュメントは設計の指針であり、実装（コードの変更）はご自身の手で行う前提で作成しています。
 - コード例は「こう書ける」という参考イメージであり、そのままコピーして使うことを強制するものではありません。
-- 参考元と異なり、認証・DB・複雑なドメインロジックを持たないため、参考リポジトリの`05_domain_design.md`・`06_database_design.md`、`frontend/06_tanstack_query.md`・`08_authentication.md`に相当するドキュメントは本プロジェクトでは作成していません。該当する設計判断が必要になった時点で追加してください。
+- 参考元と異なり、認証・DB・複雑なドメインロジックを持たないため、参考リポジトリの`frontend/06_tanstack_query.md`・`08_authentication.md`に相当するドキュメントは本プロジェクトでは作成していません。なお`05_domain_design.md`は書き込み集約を持たない軽量版、`06_content_model.md`はDBの代わりにmicroCMSのモデルを扱う内容、`07_api_design.md`は独自HTTP APIを持たないためmicroCMS利用仕様が中心です。該当する設計判断が必要になった時点で追加してください。

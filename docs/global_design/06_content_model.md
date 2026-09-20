@@ -1,8 +1,8 @@
 # コンテンツモデル設計
 
-参考リポジトリの`06_database_design.md`に相当。本プロジェクトはDBを持たず、**microCMSのコンテンツモデル**がデータの正となる。
+参考リポジトリの`06_database_design.md`に相当。本プロジェクトはDBを持たず、**microCMSのコンテンツモデル**がデータの正となる。用語は[03_ubiquitous_language.md](./03_ubiquitous_language.md)、アプリ内の型（Article）への変換は[07_api_design.md](./07_api_design.md)を参照。
 
-## 現状のモデル（`lib/types.ts`）
+## 現状のモデル（`frontend/src/external/microcms/types.ts`の`Blog`）
 
 ```ts
 export type Blog = {
@@ -58,7 +58,7 @@ export type Blog = {
 
 更新頻度が低いなら、`lib/constants.ts`に定数として持たせる実装でも問題ない。
 
-## 型定義への反映イメージ（`lib/types.ts`拡張案）
+## 型定義への反映イメージ（`external/microcms/types.ts`の拡張案）
 
 ```ts
 export type Category = {
