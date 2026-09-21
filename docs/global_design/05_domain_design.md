@@ -53,7 +53,6 @@
 | NEWバッジ | 公開日から**7日以内**の記事に付ける。基準日は「現在日時」を引数で渡す（テスト可能にするため） | `isNew(publishedAt, now, days = 7)` |
 | 公開日の表記 | `YYYY.MM.DD`（カード・詳細）。**日本時間（JST）**で日付を決める | `formatPublishedDate(iso)` |
 | 並び順 | 公開日の降順 | `sortByPublishedAtDesc(articles)` |
-| 件数表記 | 2桁ゼロ埋め（`06 ARTICLES`）。100件以上はそのまま | `formatArticleCount(n)` |
 
 > 「7日」「500字/分」は初期値の提案。変更しやすいよう定数として切り出す。
 

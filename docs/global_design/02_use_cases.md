@@ -29,7 +29,7 @@
 - **UC-ARTICLE-FilterByMonth**（Reader）
   - ARCHIVE（年月）から、その月に公開された記事へ絞り込める
 - **UC-TOPIC-Browse**（Reader）
-  - TOPICS（カテゴリ一覧＋件数）を見て、興味のあるカテゴリの記事へ移動できる
+  - サイドバーの「カテゴリー」（一覧＋件数）を見て、興味のあるカテゴリの記事へ移動できる
 
 ### 記事の閲覧
 
@@ -44,7 +44,7 @@
 - **UC-ABOUT-View**（Reader）
   - 「このブログについて」（`/about`）でブログのコンセプトを読める
 - **UC-PROFILE-View**（Reader / Client）
-  - ヘッダーの「プロフィール」または著者カードの「プロフィールを読む」から、内部のプロフィールページ（`/profile`）を開ける
+  - ヘッダーの「プロフィール」または著者カードの「more」から、内部のプロフィールページ（`/profile`）を開ける
   - 著者の自己紹介・経歴・スキルを読める
 - **UC-PROFILE-OpenSns**（Reader / Client）
   - 著者カードのSNSアイコン（GitHub / X など）から、外部のSNSを新規タブで開ける
