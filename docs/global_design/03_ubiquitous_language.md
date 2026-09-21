@@ -30,7 +30,7 @@
 
 | 用語 | 定義 |
 |---|---|
-| **Category（カテゴリ）** | 記事の分類（React / TypeScript / CSS / Testing / Git / 日々のこと）。1記事に複数付けられる |
+| **Category（カテゴリ）** | 記事の分類（React / TypeScript / Next.js / CSS / Testing / Git / 日々のこと）。1記事に複数付けられる |
 | **Slug（スラッグ）** | カテゴリをURLやキーとして扱うための英数字表記（例: `typescript`） |
 | **CategoryTag（カテゴリタグ）** | 記事カード・詳細ページに表示する、カテゴリ名の小さなラベル |
 | **CategoryFilter（カテゴリフィルタ）** | 一覧上部のタブ。「すべて」＋記事から動的に作られるカテゴリ |
@@ -46,7 +46,7 @@
 | **Thumbnail（サムネイル）** | 記事カード左側の装飾画像。画像ファイルではなく、文字と配色で描画する |
 | **CardLabel（カード見出し文字）** | サムネイル中央の大きな装飾文字（例: `TypeScript`, `useSomething()`） |
 | **CardCaption（カードキャプション）** | サムネイル下部の小さな添え文字（例: `type Safe = Learn<T>`） |
-| **CardTheme（カード配色）** | サムネイルの配色バリエーション。`blue` / `dark` / `green` / `purple` / `black` |
+| **CardTheme（カード配色）** | サムネイルの配色バリエーション。`blue` / `dark` / `green` / `purple` / `black` / `yellow` |
 | **MetaLine（メタ行）** | 公開日・NEWバッジを横に並べた行 |
 
 ## 🧭 画面・機能関連

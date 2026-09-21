@@ -25,7 +25,7 @@ export type Blog = {
 | title | タイトル | テキストフィールド | 既存 |
 | content | 本文 | リッチエディタ | 既存 |
 | excerpt | 要約 | テキストフィールド | カード・詳細ページの説明文（モックの「ユニオン型と型ガードで、安全で読みやすいコードに。」に相当） |
-| categories | カテゴリ | セレクトフィールド（複数選択） | フィルタタブ・TOPICSに使用。React / TypeScript / CSS / Testing / Git 等。選択肢の文字列はコード側のテーママッピングのキーと一致させる。レスポンスは`string[]` |
+| categories | カテゴリ | セレクトフィールド（複数選択） | フィルタタブ・TOPICSに使用。React / TypeScript / Next.js / CSS / Testing / Git 等。選択肢の文字列はコード側のテーママッピングのキーと一致させる。レスポンスは`string[]` |
 | eyecatch | アイキャッチ画像 | 画像 | 既存（現状カードでは未使用、詳細ページ等で活用余地あり） |
 | publishedAt | 公開日時 | 既存の公開日時 | 既存 |
 
@@ -71,7 +71,7 @@ export type Blog = {
   excerpt: string;
   content: string;
   categories: Category[];
-  card: { label: string; theme: "blue" | "dark" | "green" | "purple" | "black" }; // カテゴリから導出
+  card: { label: string; theme: "blue" | "dark" | "green" | "purple" | "black" | "yellow" }; // カテゴリから導出
   eyecatch?: { url: string; width: number; height: number };
   publishedAt: string;
 };

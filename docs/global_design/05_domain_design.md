@@ -23,7 +23,7 @@
 | 名前 | 使う場所 | 守るルール | 例 |
 |---|---|---|---|
 | ArticleCardStyle | Article.card | `label`（大きな装飾文字）`caption`（添え文字）`theme` の3点セット。`theme`は定義済みの値のみ | `{ label: "TypeScript", caption: "type Safe = Learn<T>", theme: "blue" }` |
-| CardTheme | ArticleCardStyle.theme | `blue` / `dark` / `green` / `purple` / `black` のいずれか | `blue` |
+| CardTheme | ArticleCardStyle.theme | `blue` / `dark` / `green` / `purple` / `black` / `yellow` のいずれか | `blue` |
 | ArchiveMonth | Archiveの1項目 | `YYYY-MM`形式 | `2026-09` |
 | PublishedAt | Article.publishedAt | ISO 8601の日時文字列。表示時は`YYYY.MM.DD`に整形 | `2026-09-14T09:00:00.000Z` |
 

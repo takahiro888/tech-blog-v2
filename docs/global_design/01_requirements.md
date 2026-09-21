@@ -22,7 +22,7 @@
 - ヒーローセクション: キャッチコピー、タイトル、サブタイトル、付随情報（PERSONAL TECH BLOG / EST. 2026 — VOL.01）
 - 最新記事セクション
   - 記事件数表示（◯◯ ARTICLES）
-  - カテゴリフィルタタブ（すべて / React / TypeScript / CSS / Testing / Git など、記事に紐づくカテゴリから動的に生成）
+  - カテゴリフィルタタブ（すべて / React / TypeScript / Next.js / CSS / Testing / Git など、記事に紐づくカテゴリから動的に生成）
   - 記事カード一覧（下記「記事カード」参照）
 - サイドバー
   - 記事検索ボックス
