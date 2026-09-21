@@ -25,15 +25,12 @@ export type Blog = {
 | title | タイトル | テキストフィールド | 既存 |
 | content | 本文 | リッチエディタ | 既存 |
 | excerpt | 要約 | テキストフィールド | カード・詳細ページの説明文（モックの「ユニオン型と型ガードで、安全で読みやすいコードに。」に相当） |
-| categories | カテゴリ | 複数選択 or コンテンツ参照(`categories`) | フィルタタブ・TOPICSに使用。React / TypeScript / CSS / Testing / Git 等 |
-| cardLabel | カード見出し文字 | テキストフィールド | カード内の大きな装飾文字（例: `TypeScript`, `useSomething()`） |
-| cardCaption | カードキャプション | テキストフィールド | カード内の小さな添え文字（例: `type Safe = Learn<T>`） |
-| cardTheme | カード配色 | セレクトフィールド | `blue` / `dark` / `green` / `purple` / `black` 等、デザインのバリエーション |
-| readingMinutes | 読了時間（分） | 数値 | 「3 min read」表示用。未設定なら本文の文字数から概算する実装でも可 |
+| categories | カテゴリ | セレクトフィールド（複数選択） | フィルタタブ・TOPICSに使用。React / TypeScript / CSS / Testing / Git 等。選択肢の文字列はコード側のテーママッピングのキーと一致させる。レスポンスは`string[]` |
+| readingMinutes | 読了時間（分） | 数値（任意） | 「3 min read」表示用。未設定なら本文の文字数から概算する |
 | eyecatch | アイキャッチ画像 | 画像 | 既存（現状カードでは未使用、詳細ページ等で活用余地あり） |
 | publishedAt | 公開日時 | 既存の公開日時 | 既存 |
 
-> カード装飾（`cardLabel` / `cardCaption` / `cardTheme`）は記事投稿のたびに手動設定するコストが発生する。「記事ごとに凝ったデザインを手動設定する」か「カテゴリに応じて自動でテーマ配色を決める（実装側で固定マッピングを持つ）」かはトレードオフがあるため、見た目のこだわりと運用コストのどちらを優先するか実装前に決めておくとよい。
+> カード装飾（配色・大きな装飾文字）はmicroCMSにフィールドを持たず、**カテゴリから実装側で自動導出する**方針（先頭カテゴリ→テーマの固定マッピング、装飾文字は先頭カテゴリ名）。記事ごとに手動設定する運用コストを避けるための判断。必要になった場合のみ`cardTheme`等を後から追加する。
 
 ### `categories`（新規・任意）
 
@@ -75,9 +72,7 @@ export type Blog = {
   excerpt: string;
   content: string;
   categories: Category[];
-  cardLabel: string;
-  cardCaption: string;
-  cardTheme: "blue" | "dark" | "green" | "purple" | "black";
+  card: { label: string; theme: "blue" | "dark" | "green" | "purple" | "black" }; // カテゴリから導出
   readingMinutes: number;
   eyecatch?: { url: string; width: number; height: number };
   publishedAt: string;
