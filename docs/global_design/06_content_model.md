@@ -31,14 +31,9 @@ export type Blog = {
 
 > カード装飾（配色・大きな装飾文字）はmicroCMSにフィールドを持たず、**カテゴリから実装側で自動導出する**方針（先頭カテゴリ→テーマの固定マッピング、装飾文字は先頭カテゴリ名）。記事ごとに手動設定する運用コストを避けるための判断。必要になった場合のみ`cardTheme`等を後から追加する。
 
-### `categories`（新規・任意）
+### カテゴリの管理方法
 
-カテゴリを独立コンテンツにするか、`blogs`内の複数選択フィールドで済ませるかは記事数次第。件数が少ないうちは複数選択フィールドで十分。
-
-| フィールドID | 表示名 | 型 |
-|---|---|---|
-| name | カテゴリ名 | テキスト |
-| slug | スラッグ | テキスト |
+カテゴリは独立したAPI（コンテンツ参照）にせず、`blogs`の**セレクトフィールド（複数選択）**で管理する。レスポンスは文字列の配列（`["React", "TypeScript"]`）で、カテゴリ名がそのまま識別子になる（`slug`・`id`は持たない）。選択肢の追加時は、コード側の`CATEGORIES`とテーママッピングにも反映する。カテゴリごとに説明文やアイコンを持たせたくなった場合に、独立APIへの移行を検討する。
 
 ### `profile`（新規・**必須**、オブジェクト形式＝1件のみ）
 
@@ -60,17 +55,14 @@ export type Blog = {
 ## 型定義への反映イメージ（`external/microcms/types.ts`の拡張案）
 
 ```ts
-export type Category = {
-  id: string;
-  name: string;
-};
+export type Category = string; // セレクトフィールドの選択肢（カテゴリ名）
 
 export type Blog = {
   id: string;
   title: string;
-  excerpt: string;
   content: string;
-  categories: Category[];
+  excerpt?: string; // 未入力の場合、レスポンスにキー自体が含まれない
+  categories?: Category[]; // 同上
   card: { label: string; theme: "blue" | "dark" | "green" | "purple" | "black" | "yellow" }; // カテゴリから導出
   eyecatch?: { url: string; width: number; height: number };
   publishedAt: string;

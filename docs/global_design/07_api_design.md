@@ -77,7 +77,7 @@
 | `id` | `id` | そのまま |
 | `title` / `excerpt` | `title` / `excerpt` | そのまま。`excerpt`未設定なら本文先頭から生成する案もある（要判断） |
 | `content` | `body` | そのまま（HTML） |
-| `categories[]` | `categories[]` | `{ id, name, slug }`に整形。未設定は空配列 |
+| `categories[]` | `categories[]` | 文字列（カテゴリ名）の配列のまま。未設定の記事はキー自体が無いので空配列にする |
 | （microCMSに無し） | `card` | `label`=先頭カテゴリ名、`theme`=先頭カテゴリからの固定マッピング（該当なしは`blue`）で導出 |
 | `publishedAt` | `publishedAt` | そのまま（ISO 8601） |
 | `eyecatch` | `eyecatch` | 任意 |

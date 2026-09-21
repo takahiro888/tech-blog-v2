@@ -14,7 +14,7 @@
 | エンティティ | 説明 | 主な属性 |
 |---|---|---|
 | Article | 記事1件。ブログの中心 | id, title, excerpt, body, categories[], card, publishedAt, eyecatch? |
-| Category | 記事の分類 | id, name, slug |
+| Category | 記事の分類。独立したエンティティではなく、Articleが持つ**カテゴリ名の文字列**（microCMSのセレクトフィールドの選択肢） | name（文字列そのもの） |
 | Author | 著者（サイト全体で1人）。著者カードと`/profile`の元になる | name, role, bio, avatarUrl?, snsLinks[], profileImageUrl?, profileBody |
 | SnsLink | 著者のSNSへの外部リンク（Authorの一部） | type（`github` / `x` など）, url |
 
@@ -22,7 +22,7 @@
 
 | 名前 | 使う場所 | 守るルール | 例 |
 |---|---|---|---|
-| ArticleCardStyle | Article.card | `label`（大きな装飾文字）`caption`（添え文字）`theme` の3点セット。`theme`は定義済みの値のみ | `{ label: "TypeScript", caption: "type Safe = Learn<T>", theme: "blue" }` |
+| ArticleCardStyle | Article.card | `label`（大きな装飾文字）`theme` の2点セット。いずれもカテゴリから導出する。`theme`は定義済みの値のみ | `{ label: "TypeScript", theme: "dark" }` |
 | CardTheme | ArticleCardStyle.theme | `blue` / `dark` / `green` / `purple` / `black` / `yellow` のいずれか | `blue` |
 | ArchiveMonth | Archiveの1項目 | `YYYY-MM`形式 | `2026-09` |
 | PublishedAt | Article.publishedAt | ISO 8601の日時文字列。表示時は`YYYY.MM.DD`に整形 | `2026-09-14T09:00:00.000Z` |
@@ -32,7 +32,7 @@
 読み取り専用のため、トランザクション境界や不変条件を守る**書き込み集約は存在しない**。データの関係だけを示す。
 
 ```
-[Article] ──has many──> [Category]      … 記事は複数カテゴリを持てる（0件も可）
+[Article] ──has many──> Category（文字列） … 記事は複数カテゴリを持てる（0件も可）
 [Article] ──has──> [ArticleCardStyle]   … 表示用の装飾情報（VO）
 [Author] ──has many──> [SnsLink]         … 著者はSNSリンクを持つ
 [Author]                                … 記事とは関連付けない（サイト全体で1人）。`/profile`の本文（HTML）も保持する
@@ -41,8 +41,8 @@
 | 項目 | 内容 |
 |---|---|
 | 集約ルート | Article（読み取りの単位。カテゴリは参照として持つ） |
-| 一意性 | ArticleId、Category.slug はそれぞれ一意 |
-| 整合性 | 参照先のカテゴリが削除された場合は、microCMS側の参照解除に従う。本アプリは存在するカテゴリのみを扱う |
+| 一意性 | ArticleId は一意。カテゴリ名は1記事内で重複しない（Reactのkeyにもカテゴリ名を使う） |
+| 整合性 | カテゴリの選択肢はmicroCMS側とコード側（`CATEGORIES`・テーママッピング）の二重管理になる。選択肢を追加したらコード側にも反映する。マッピングにないカテゴリは既定テーマで表示する |
 
 ## ドメインロジック（純粋関数）
 
@@ -61,7 +61,7 @@
 | ルール | 内容 | 関数（案） |
 |---|---|---|
 | キーワード検索 | タイトルの部分一致。大文字小文字・全角半角の空白の違いを無視。空文字は全件 | `matchesKeyword(article, q)` |
-| カテゴリ絞り込み | 選択したカテゴリ（slug）を持つ記事。未選択（すべて）は全件 | `matchesCategory(article, slug?)` |
+| カテゴリ絞り込み | 選択したカテゴリ（カテゴリ名）を持つ記事。未選択（すべて）は全件 | `matchesCategory(article, category?)` |
 | 月絞り込み | `publishedAt`のJST年月が`YYYY-MM`と一致 | `matchesMonth(article, month?)` |
 | 合成 | 上記のAND条件 | `filterArticles(articles, { q, category, month })` |
 
