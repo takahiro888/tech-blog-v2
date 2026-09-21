@@ -8,14 +8,14 @@ export function isNew(
   days = NEW_DAYS,
 ): boolean {
   const elapsed =
-    now.getTime() - new Date(publishedAt).getTime() - JST_OFFSET_MS;
+    now.getTime() - new Date(publishedAt).getTime();
   return elapsed >= 0 && elapsed <= days * DAY_MS;
 }
 
 export function formatPublishedDate(isoString: string): string {
   const jst = new Date(new Date(isoString).getTime() + JST_OFFSET_MS);
-  const year = jst.getFullYear();
-  const month = String(jst.getMonth() + 1).padStart(2, "0");
-  const day = String(jst.getDate()).padStart(2, "0");
+  const year = jst.getUTCFullYear();
+  const month = String(jst.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(jst.getUTCDate()).padStart(2, "0");
   return `${year}.${month}.${day}`;
 }
