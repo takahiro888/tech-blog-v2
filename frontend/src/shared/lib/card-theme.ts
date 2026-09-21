@@ -21,5 +21,5 @@ const CATEGORY_THEME = new Map<string, CardTheme>([
 
 export function getCardTheme(categories: readonly Category[] = []): CardTheme {
   const first = categories[0];
-  return first ? (CATEGORY_THEME.get(first.name) ?? DEFAULT_THEME) : DEFAULT_THEME;
+  return first ? (CATEGORY_THEME.get(first) ?? DEFAULT_THEME) : DEFAULT_THEME;
 }

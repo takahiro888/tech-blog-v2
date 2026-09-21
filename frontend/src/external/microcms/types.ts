@@ -7,10 +7,7 @@ export const CATEGORIES = [
   "Git",
 ];
 
-export type Category = {
-  id: string;
-  name: string;
-};
+export type Category = string;
 
 export type Blog = {
   id: string;
