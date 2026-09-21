@@ -12,12 +12,12 @@ describe("getCardTheme", () => {
     expect(getCardTheme([cat("Git"), cat("React")])).toBe("black");
   });
 
-  it("カテゴリが空・未指定なら規定テーマを返す", () => {
+  it("カテゴリが空・未指定なら既定テーマを返す", () => {
     expect(getCardTheme([])).toBe("blue");
     expect(getCardTheme()).toBe("blue");
   });
 
-  it("Object.prototypeのプロパティ名でも規定テーマを返す", () => {
+  it("Object.prototypeのプロパティ名でも既定テーマを返す", () => {
     expect(getCardTheme([cat("constructor")])).toBe("blue");
   });
 });
