@@ -1,4 +1,11 @@
-export const CATEGORIES = ["React", "TypeScript", "Next.js", "CSS", "Testing","Git"];
+export const CATEGORIES = [
+  "React",
+  "TypeScript",
+  "Next.js",
+  "CSS",
+  "Testing",
+  "Git",
+];
 
 export type Category = {
   id: string;
@@ -11,7 +18,6 @@ export type Blog = {
   content: string;
   excerpt?: string;
   categories?: Category[];
-  readingMinutes?: number;
   eyecatch?: {
     url: string;
     width: number;

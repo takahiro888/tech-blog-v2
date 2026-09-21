@@ -37,7 +37,7 @@
 ### フェーズ2: 中身の実装（構造が固まった後）
 
 4. **microCMSスキーマ拡張と06_content_model.mdの反映**
-   - `excerpt` / `categories`（複数選択） / `readingMinutes` をmicroCMS側に追加（カード装飾はカテゴリから自動導出するためフィールド不要）し、`external/microcms/types.ts`に反映
+   - `excerpt` / `categories`（複数選択）をmicroCMS側に追加（カード装飾はカテゴリから自動導出するためフィールド不要）し、`external/microcms/types.ts`に反映
 5. **サイドバー機能の実装**
    - `features/sidebar/` にAuthorCard / TopicsList / ArchiveList / SearchBoxを実装
    - TOPICS・ARCHIVEは記事データからの集計ロジックが必要（`external/microcms/blogs.ts`に集計用関数を追加するか、features内で計算するかは設計時に決める）

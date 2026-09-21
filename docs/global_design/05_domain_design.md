@@ -13,7 +13,7 @@
 
 | エンティティ | 説明 | 主な属性 |
 |---|---|---|
-| Article | 記事1件。ブログの中心 | id, title, excerpt, body, categories[], card, readingMinutes, publishedAt, eyecatch? |
+| Article | 記事1件。ブログの中心 | id, title, excerpt, body, categories[], card, publishedAt, eyecatch? |
 | Category | 記事の分類 | id, name, slug |
 | Author | 著者（サイト全体で1人）。著者カードと`/profile`の元になる | name, role, bio, avatarUrl?, snsLinks[], profileImageUrl?, profileBody |
 | SnsLink | 著者のSNSへの外部リンク（Authorの一部） | type（`github` / `x` など）, url |
@@ -24,7 +24,6 @@
 |---|---|---|---|
 | ArticleCardStyle | Article.card | `label`（大きな装飾文字）`caption`（添え文字）`theme` の3点セット。`theme`は定義済みの値のみ | `{ label: "TypeScript", caption: "type Safe = Learn<T>", theme: "blue" }` |
 | CardTheme | ArticleCardStyle.theme | `blue` / `dark` / `green` / `purple` / `black` のいずれか | `blue` |
-| ReadingMinutes | Article.readingMinutes | 1以上の整数。CMS未入力なら本文から概算する | `3` |
 | ArchiveMonth | Archiveの1項目 | `YYYY-MM`形式 | `2026-09` |
 | PublishedAt | Article.publishedAt | ISO 8601の日時文字列。表示時は`YYYY.MM.DD`に整形 | `2026-09-14T09:00:00.000Z` |
 
@@ -52,7 +51,6 @@
 | ルール | 内容 | 関数（案） |
 |---|---|---|
 | NEWバッジ | 公開日から**7日以内**の記事に付ける。基準日は「現在日時」を引数で渡す（テスト可能にするため） | `isNew(publishedAt, now, days = 7)` |
-| 読了時間 | 本文のHTMLタグを除いた文字数 ÷ **500字/分**、小数点以下切り上げ、最小1分。CMSで`readingMinutes`が入力されていればそれを優先 | `calcReadingMinutes(html)` |
 | 公開日の表記 | `YYYY.MM.DD`（カード・詳細）。**日本時間（JST）**で日付を決める | `formatPublishedDate(iso)` |
 | 並び順 | 公開日の降順 | `sortByPublishedAtDesc(articles)` |
 | 件数表記 | 2桁ゼロ埋め（`06 ARTICLES`）。100件以上はそのまま | `formatArticleCount(n)` |
@@ -90,6 +88,6 @@
 
 ## テスト方針
 
-- 対象: 上記の純粋関数（`isNew`, `calcReadingMinutes`, `filterArticles`, `aggregate*` など）と、microCMS呼び出し層のパラメータ組み立て
+- 対象: 上記の純粋関数（`isNew`, `filterArticles`, `aggregate*` など）と、microCMS呼び出し層のパラメータ組み立て
 - 対象外: コンポーネントの見た目・レイアウト・スタイル
-- 境界値の例: NEWの7日ちょうど、読了時間が0文字／499字／501字、UTCとJSTの日付またぎ（`2026-09-13T16:00:00Z`はJSTで`09-14`）、カテゴリなしの記事、検索語が空
+- 境界値の例: NEWの7日ちょうど、UTCとJSTの日付またぎ（`2026-09-13T16:00:00Z`はJSTで`09-14`）、カテゴリなしの記事、検索語が空

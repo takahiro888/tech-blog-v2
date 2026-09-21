@@ -55,7 +55,7 @@
 | `orders` | `-publishedAt` | 公開日の降順 |
 | `limit` | `100` | 取得件数（既定10、最大100） |
 | `offset` | `0` | 取得開始位置（100件超で使用） |
-| `fields` | `id,title,excerpt,categories,readingMinutes,publishedAt` | 一覧では本文を除外 |
+| `fields` | `id,title,excerpt,categories,publishedAt` | 一覧では本文を除外 |
 | `depth` | `1` | カテゴリを参照コンテンツにした場合、参照先の中身まで展開する |
 | `filters` | `title[contains]hooks` | サーバー側検索（案Bに移行する場合のみ） |
 
@@ -79,7 +79,6 @@
 | `content` | `body` | そのまま（HTML） |
 | `categories[]` | `categories[]` | `{ id, name, slug }`に整形。未設定は空配列 |
 | （microCMSに無し） | `card` | `label`=先頭カテゴリ名、`theme`=先頭カテゴリからの固定マッピング（該当なしは`blue`）で導出 |
-| `readingMinutes` | `readingMinutes` | 未設定なら`calcReadingMinutes(content)` |
 | `publishedAt` | `publishedAt` | そのまま（ISO 8601） |
 | `eyecatch` | `eyecatch` | 任意 |
 

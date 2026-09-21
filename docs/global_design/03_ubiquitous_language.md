@@ -22,7 +22,6 @@
 | **Excerpt（要約）** | カードと詳細ページ冒頭に出す1文の説明。本文の抜粋ではなく、CMSで別途入力する |
 | **Body（本文）** | 記事の中身。microCMSのリッチエディタが出力するHTML |
 | **PublishedAt（公開日）** | 記事が公開された日時。並び順・NEW判定・アーカイブ集計の基準 |
-| **ReadingMinutes（読了時間）** | 読むのにかかる想定分数。カードに「3 min read」と表示する |
 | **NewBadge（NEWバッジ）** | 公開から一定期間内の記事に付く「NEW」表示 |
 | **Eyecatch（アイキャッチ）** | microCMSに登録する記事画像。未設定でも記事は成立する |
 | **Draft（下書き）** | microCMS上で未公開の状態。本アプリには現れない |
@@ -48,7 +47,7 @@
 | **CardLabel（カード見出し文字）** | サムネイル中央の大きな装飾文字（例: `TypeScript`, `useSomething()`） |
 | **CardCaption（カードキャプション）** | サムネイル下部の小さな添え文字（例: `type Safe = Learn<T>`） |
 | **CardTheme（カード配色）** | サムネイルの配色バリエーション。`blue` / `dark` / `green` / `purple` / `black` |
-| **MetaLine（メタ行）** | 公開日・読了時間・NEWバッジを横に並べた行 |
+| **MetaLine（メタ行）** | 公開日・NEWバッジを横に並べた行 |
 
 ## 🧭 画面・機能関連
 
