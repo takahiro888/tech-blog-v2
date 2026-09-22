@@ -117,11 +117,11 @@ export function ArticleGrid({ articles }: { articles: Blog[] }) {
 
 - Server Componentで全件取得し、propsとして渡す
 - タブ選択・検索文字列・ページ番号・表示件数はクライアント側の状態として持ち、渡された配列をJS側でフィルタ＋ページ分割する（`filterArticles` → `paginate`）
-- 状態をURLの`searchParams`（`category` / `q` / `month` / `page` / `pageSize`）へ同期させることは、この案のままでも可能。「計算をどこでやるか」と「状態をURLに表すか」は別軸であり、案Aでも`useSearchParams` + `router.replace`でURL同期だけ行える
+- 状態をURLの`searchParams`（`category` / `keyword` / `month` / `page` / `pageSize`）へ同期させることは、この案のままでも可能。「計算をどこでやるか」と「状態をURLに表すか」は別軸であり、案Aでも`useSearchParams` + `router.replace`でURL同期だけ行える
 
 ### 案B: URLの`searchParams`でサーバー側フィルタ・ページ取得（記事数が増えたら移行）
 
-- `/?category=react&q=hooks&page=2&pageSize=10`のようにURLに条件を持たせる
+- `/?category=react&keyword=hooks&page=2&pageSize=10`のようにURLに条件を持たせる
 - ページ（Server Component）が`searchParams`を受け取り、microCMSのフィルタクエリ（`filters`パラメータ）と`limit`/`offset`で、該当ページ分のみをmicroCMSから取得する
 - 1回のAPI呼び出しで全件を取得できなくなった場合（100件超）や、取得コストを下げたい場合に移行する
 

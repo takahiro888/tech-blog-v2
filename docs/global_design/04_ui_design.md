@@ -194,7 +194,7 @@
 | パラメータ | 例 | 用途 |
 |---|---|---|
 | `category` | `?category=TypeScript` | 選択中のカテゴリ（URLエンコード。例: `Next.js`） |
-| `q` | `?q=hooks` | 検索キーワード |
+| `keyword` | `?keyword=hooks` | 検索キーワード |
 | `month` | `?month=2026-09` | アーカイブの絞り込み |
 | `page` | `?page=2` | 現在のページ番号（既定1） |
 | `pageSize` | `?pageSize=20` | 表示件数（既定10） |
