@@ -25,7 +25,7 @@ export function ArticleGrid({
 
   return (
     <div className="flex flex-cols-1 gap-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="flex flex-col divide-y divide-base-300">
         {visibleArticles.map((article) => (
           <ArticleCard key={article.id} article={article} />
         ))}
