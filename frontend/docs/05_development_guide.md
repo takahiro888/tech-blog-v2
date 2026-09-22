@@ -69,6 +69,7 @@ Claudeがコミットを作成する際は、**`git commit`を実行する前に
 - import は `@/` エイリアスに統一する（現状`components/ArticleGrid.tsx`は相対パス、`app/blogs/[id]/page.tsx`は`@/`と混在している）
 - `external/` 層はmicroCMS SDKへの依存をこの層の外に漏らさない（`features/`や`app/`からは`external/microcms/blogs.ts`が返す型だけを扱う）
 - Server Componentで完結できる処理に`"use client"`を安易に付けない。クライアント側の状態（開閉、フィルタ選択等）が必要な最小単位のみをクライアントコンポーネントに切り出す
+- 変数・プロパティ・型のフィールド名は略語を避け、名前だけで意味が伝わるようにする（例: 検索キーワードを表す値は`q`ではなく`keyword`、パース結果は`n`ではなく`parsed`のように書く）。URLの`searchParams`のキー名（`q`・`month`等、[04_ui_design.md](../../docs/global_design/04_ui_design.md)5.5節で定義）のように外部契約でキー名が固定されている場合は、そのキー名自体は変えずに保ちつつ、`searchParams`から受け取った直後に意味の分かる変数名へ詰め替えてから内部ロジックに渡す
 
 ## テスト方針
 
