@@ -26,7 +26,7 @@
    - `lib/microcms.ts` を `external/microcms/client.ts` + `external/microcms/blogs.ts` に分割
    - `lib/types.ts` の `Blog` 型を `external/microcms/types.ts` に移動（フィールド拡張はまだ行わない）
 2. **`app/api/blogs/*` と `app/api/qiita/*` の廃止**（同じファイルを触るためまとめて実施）
-   - `app/page.tsx` / `app/blogs/page.tsx` から `external/microcms/blogs.ts` を直接呼ぶよう変更
+   - `app/page.tsx`（記事一覧を兼ねるトップページ） / `app/blogs/[id]/page.tsx` から `external/microcms/blogs.ts` を直接呼ぶよう変更
    - `app/page.tsx` のQiita記事一覧セクションを削除
    - 不要になった `app/api/blogs/route.ts` / `app/api/blogs/[id]/route.ts` / `app/api/qiita/route.ts` を削除
    - `.env` の `QIITA_API_KEY` / `NEXT_PUBLIC_QIITA_API_KEY` を削除（microCMS関連の環境変数のみ残す）
@@ -41,8 +41,9 @@
 5. **サイドバー機能の実装**
    - `features/sidebar/` にAuthorCard / TopicsList / ArchiveList / SearchBoxを実装
    - TOPICS・ARCHIVEは記事データからの集計ロジックが必要（`external/microcms/blogs.ts`に集計用関数を追加するか、features内で計算するかは設計時に決める）
-6. **カテゴリフィルタ・検索の実装**
-   - まずはクライアント側フィルタ（案A）で実装し、動作確認後に必要であれば案B（URL `searchParams`）へ移行
+6. **カテゴリフィルタ・検索・ページネーションの実装**
+   - まずはクライアント側フィルタ・ページ分割（案A）で実装し、動作確認後に必要であれば案B（URL `searchParams`でmicroCMSへ直接ページ取得）へ移行
+   - 件数表示（「◯件中 ◯〜◯件を表示」）・表示件数セレクト（10/20/30件）・ページ番号／前へ／次へを実装する（仕様は`docs/global_design/04_ui_design.md`の「5.2.1 ページネーション」を参照）
 7. **`/about` ページの新規作成**
 8. **`/profile` ページの新規作成**
    - microCMSに`profile`（オブジェクト形式）を作成し、`external/microcms/profile.ts`に`getProfile`を追加

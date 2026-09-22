@@ -65,6 +65,18 @@
 | 月絞り込み | `publishedAt`のJST年月が`YYYY-MM`と一致 | `matchesMonth(article, month?)` |
 | 合成 | 上記のAND条件 | `filterArticles(articles, { q, category, month })` |
 
+### ページネーション
+
+トップページ（`/`）の最新記事セクションが全記事一覧を兼ねる（旧`/blogs`は廃止）ため、`filterArticles`の結果に対してページ分割を行う。
+
+| ルール | 内容 | 関数（案） |
+|---|---|---|
+| ページ分割 | 絞り込み済みの記事群を`pageSize`単位に分割し、指定`page`分を返す。`page`が総ページ数を超える場合は最終ページにクランプする | `paginate(articles, { page, pageSize })` |
+| 総ページ数の算出 | 絞り込み済みの件数と`pageSize`から算出（`Math.ceil(totalCount / pageSize)`） | `getTotalPages(totalCount, pageSize)` |
+| 表示範囲の算出 | 件数表示（「◯件中 ◯〜◯件を表示」）用に、現在ページの開始・終了番号を算出する | `getPageRange(page, pageSize, totalCount)` |
+
+> 適用順序は「絞り込み（`filterArticles`）→ ページ分割（`paginate`）」。TOPICS・ARCHIVEの集計は現行方針どおり**絞り込み前の全記事**から行い、件数バッジは常に「絞り込みをかけていない場合の件数」を示す（ページネーションの追加によるこの方針への影響はない）。
+
 ### 集計
 
 | ルール | 内容 | 関数（案） |
@@ -81,12 +93,12 @@
 | 種類 | 置き場所（案） | 備考 |
 |---|---|---|
 | Article / Category / Author の型 | `shared/lib/types.ts`（規模が育てば`features/*/types.ts`） | UIとexternalの両方から参照される |
-| 表示ルール・絞り込み・集計の純粋関数 | `features/blog-list/lib/`（記事一覧が中心のため）。サイドバーでのみ使うものは`features/sidebar/lib/` | 複数featureで使うと分かった時点で`shared/lib/`へ昇格 |
+| 表示ルール・絞り込み・集計・ページネーションの純粋関数 | `features/blog-list/lib/`（記事一覧が中心のため）。サイドバーでのみ使うものは`features/sidebar/lib/` | 複数featureで使うと分かった時点で`shared/lib/`へ昇格 |
 | microCMSレスポンス → Article への変換 | `external/microcms/` | 外部の形をアプリに持ち込まない |
-| 定数（NEW日数、字/分、ヒーロー文言） | `shared/lib/constants.ts` | |
+| 定数（NEW日数、字/分、ヒーロー文言、ページサイズの選択肢） | `shared/lib/constants.ts` | |
 
 ## テスト方針
 
-- 対象: 上記の純粋関数（`isNew`, `filterArticles`, `aggregate*` など）と、microCMS呼び出し層のパラメータ組み立て
+- 対象: 上記の純粋関数（`isNew`, `filterArticles`, `aggregate*`, `paginate`, `getTotalPages`, `getPageRange` など）と、microCMS呼び出し層のパラメータ組み立て
 - 対象外: コンポーネントの見た目・レイアウト・スタイル
-- 境界値の例: NEWの7日ちょうど、UTCとJSTの日付またぎ（`2026-09-13T16:00:00Z`はJSTで`09-14`）、カテゴリなしの記事、検索語が空
+- 境界値の例: NEWの7日ちょうど、UTCとJSTの日付またぎ（`2026-09-13T16:00:00Z`はJSTで`09-14`）、カテゴリなしの記事、検索語が空、総件数が`pageSize`でちょうど割り切れる場合と余りが出る場合（例: 30件を10件ずつなら3ページちょうど、31件なら4ページ目は1件のみ）、総ページ数を超える`page`を渡した場合のクランプ

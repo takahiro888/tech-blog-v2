@@ -63,10 +63,9 @@ frontend/                        … アプリ本体一式をここに移動
   src/
     app/
       layout.tsx
-      page.tsx                   … トップページ（Server Component、featuresを組み立てるだけ）
+      page.tsx                   … トップページ（Server Component、featuresを組み立てるだけ）。記事一覧を兼ねる（フィルタ・検索・ページネーション込み）
       blogs/
-        page.tsx                 … 記事一覧ページ
-        [id]/page.tsx             … 記事詳細ページ
+        [id]/page.tsx             … 記事詳細ページ。旧`blogs/page.tsx`（記事一覧）は廃止し、トップページ（`/`）に統合した
       about/
         page.tsx                 … このブログについて（新規）
       profile/
@@ -77,6 +76,10 @@ frontend/                        … アプリ本体一式をここに移動
           ArticleCard.tsx
           ArticleGrid.tsx
           CategoryFilter.tsx
+          Pagination.tsx          … ページ番号・前へ／次へ
+          PageSizeSelect.tsx      … 表示件数セレクト
+        lib/
+          paginate.ts             … paginate / getTotalPages / getPageRange などの純粋関数
         index.ts                 … このfeatureの公開インターフェース
       blog-detail/
         components/

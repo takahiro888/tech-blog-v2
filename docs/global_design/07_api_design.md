@@ -31,6 +31,7 @@
 |---|---|
 | 取得タイミング | Server Component内（ビルド時／リクエスト時）。クライアントから直接microCMSを呼ばない |
 | 全件取得 | microCMSの`limit`上限は100件。**現状の記事数（6件程度）では全件を1回で取得**する。100件を超えたら`offset`で繰り返し取得、またはサーバー側フィルタ（案B）へ移行する |
+| ページネーション（表示件数・ページ番号） | MVPではこの全件取得結果に対して**アプリ側（案A）**で絞り込み・ページ分割を計算する（[05_domain_design.md](./05_domain_design.md)の`paginate`）。1回のAPI呼び出しで取得できる上限（100件）を超える規模になったら、`limit`/`offset`と`filters`をmicroCMSへ直接渡す案Bへ移行し、`getBlogList()`の引数を`{ page, pageSize, category, q, month }`相当に拡張する |
 | 集計 | TOPICS・ARCHIVE・件数は取得済みの記事群から計算する（追加のAPI呼び出しをしない） |
 | 取得フィールド | 一覧では**本文（`content`）を除外**して軽量化する（`fields`パラメータ）。詳細のみ本文を取得する |
 | キャッシュ | 更新頻度は低い前提。`cacheLife("hours")`程度（有効化は任意。判断は実装者） |
