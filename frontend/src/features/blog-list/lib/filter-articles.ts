@@ -7,6 +7,32 @@ export type ArticleFilter = {
   yearMonth?: string;
 };
 
+export type PaginationResult<T> = {
+  items: T[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  displayStart: number; // 表示範囲の開始番号（1始まり）。0件のときは0
+  displayEnd: number; // 表示範囲の終了番号
+};
+
+export type RawArticlesSearchParams = {
+  category?: string;
+  keyword?: string;
+  month?: string;
+  page?: string;
+  pageSize?: string;
+};
+
+export type ParsedArticlesQuery = {
+  category?: string;
+  keyword?: string;
+  yearMonth?: string;
+  page: number;
+  pageSize: number;
+  hasActiveFilters: boolean;
+};
+
 export const PAGE_SIZE_OPTIONS = [10, 20, 30];
 export const DEFAULT_PAGE_SIZE = 10;
 
@@ -41,15 +67,6 @@ export function filterArticles(
   });
 }
 
-export type PaginationResult<T> = {
-  items: T[];
-  totalCount: number;
-  currentPage: number;
-  totalPages: number;
-  displayStart: number; // 表示範囲の開始番号（1始まり）。0件のときは0
-  displayEnd: number; // 表示範囲の終了番号
-};
-
 export function paginateArticles<T>(
   articles: readonly T[],
   page: number,
@@ -68,4 +85,46 @@ export function paginateArticles<T>(
     displayStart: totalCount === 0 ? 0 : offset + 1,
     displayEnd: offset + items.length,
   };
+}
+
+export function parseArticlesSearchParams(
+  raw: RawArticlesSearchParams,
+): ParsedArticlesQuery {
+  const parsedPage = Number(raw.page);
+  const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+
+  const parsedPageSize = Number(raw.pageSize);
+  const pageSize = PAGE_SIZE_OPTIONS.includes(parsedPageSize)
+    ? parsedPageSize
+    : DEFAULT_PAGE_SIZE;
+
+  return {
+    category: raw.category,
+    keyword: raw.keyword,
+    yearMonth: raw.month,
+    page,
+    pageSize,
+    hasActiveFilters: Boolean(
+      raw.category || raw.keyword || raw.month || raw.page || raw.pageSize,
+    ),
+  };
+}
+
+export function buildArticlesHref(
+  query: Pick<
+    ParsedArticlesQuery,
+    "category" | "keyword" | "yearMonth" | "pageSize"
+  >,
+  targetPage: number,
+): string {
+  const params = new URLSearchParams();
+  if (query.category) params.set("category", query.category);
+  if (query.keyword) params.set("keyword", query.keyword);
+  if (query.yearMonth) params.set("month", query.yearMonth);
+  if (query.pageSize !== DEFAULT_PAGE_SIZE) {
+    params.set("pageSize", String(query.pageSize));
+  }
+  if (targetPage > 1) params.set("page", String(targetPage));
+  const search = params.toString();
+  return search ? `/?${search}` : "/";
 }
