@@ -2,7 +2,6 @@ import { getBlogList } from "@/external/microcms/blogs";
 import { aggregateCategories } from "@/features/sidebar/lib/aggregate";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
-import { CatchCopy } from "@/features/home/components/CatchCopy";
 import { ArticleGrid } from "@/features/blog-list/components/ArticleGrid";
 import { CategoryTabs } from "@/features/blog-list/components/CategoryTabs";
 import { ResultSummary } from "@/features/blog-list/components/ResultSummary";
@@ -55,7 +54,6 @@ export default async function Home({
       )}
 
       <SidebarLayout articles={contents} searchKeyword={query.keyword}>
-        {!filterLabel && <CatchCopy />}
 
         <h1 className="mb-4 text-xl font-bold">{heading}</h1>
         <CategoryTabs
