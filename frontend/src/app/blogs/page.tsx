@@ -1,5 +1,5 @@
 import { getBlogList } from "@/external/microcms/blogs";
-import { ArticleGrid } from "@/features/blog-list";
+import { ArticleGrid } from "@/features/blog-list/components/ArticleGrid";
 import { Sidebar } from "@/features/sidebar/components/Sidebar";
 
 export default async function BlogsPage() {
