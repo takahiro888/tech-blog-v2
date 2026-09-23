@@ -30,7 +30,6 @@ export type ParsedArticlesQuery = {
   yearMonth?: string;
   page: number;
   pageSize: number;
-  hasActiveFilters: boolean;
 };
 
 export const PAGE_SIZE_OPTIONS = [10, 20, 30];
@@ -104,9 +103,6 @@ export function parseArticlesSearchParams(
     yearMonth: raw.month,
     page,
     pageSize,
-    hasActiveFilters: Boolean(
-      raw.category || raw.keyword || raw.month || raw.page || raw.pageSize,
-    ),
   };
 }
 
