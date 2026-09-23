@@ -1,4 +1,5 @@
 import { getBlogDetail } from "@/external/microcms/blogs";
+import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 
 export default async function BlogDetailPage({
@@ -20,14 +21,19 @@ export default async function BlogDetailPage({
   }
 
   return (
-    <SidebarLayout>
-      <article className="prose">
-        <h1>{blog.title}</h1>
-        <p className="text-sm text-base-content/60">
-          {blog.publishedAt.slice(0, 10)}
-        </p>
-        <div dangerouslySetInnerHTML={{ __html: blog.content }} />
-      </article>
-    </SidebarLayout>
+    <>
+      <Breadcrumb
+        items={[{ label: "HOME", href: "/" }, { label: blog.title }]}
+      />
+      <SidebarLayout>
+        <article className="prose">
+          <h1>{blog.title}</h1>
+          <p className="text-sm text-base-content/60">
+            {blog.publishedAt.slice(0, 10)}
+          </p>
+          <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+        </article>
+      </SidebarLayout>
+    </>
   );
 }

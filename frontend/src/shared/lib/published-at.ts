@@ -7,8 +7,7 @@ export function isNew(
   now: Date,
   days = NEW_DAYS,
 ): boolean {
-  const elapsed =
-    now.getTime() - new Date(publishedAt).getTime();
+  const elapsed = now.getTime() - new Date(publishedAt).getTime();
   return elapsed >= 0 && elapsed <= days * DAY_MS;
 }
 
@@ -18,4 +17,9 @@ export function formatPublishedDate(isoString: string): string {
   const month = String(jst.getUTCMonth() + 1).padStart(2, "0");
   const day = String(jst.getUTCDate()).padStart(2, "0");
   return `${year}.${month}.${day}`;
+}
+
+export function formatYearMonthLabel(yearMonth: string): string {
+  const [year, month] = yearMonth.split("-");
+  return `${year}年${Number(month)}月`;
 }

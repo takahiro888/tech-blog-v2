@@ -9,8 +9,7 @@ export const AUTHOR = {
   bio: "コードを書いたり、仕組みを調べたり。日々の「なるほど」を、未来の自分と誰かのために残しています。",
 } as const;
 
-export const HERO = {
-  title: "技術と、日々の余白。",
+export const CATCH_COPY = {
   subtitle: "つくって、試して、わかったこと。Web開発の学びをここに。",
 } as const;
 

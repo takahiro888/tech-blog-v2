@@ -1,7 +1,8 @@
 import { getBlogList } from "@/external/microcms/blogs";
 import { aggregateCategories } from "@/features/sidebar/lib/aggregate";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
-import { HERO } from "@/shared/lib/constants";
+import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
+import { CatchCopy } from "@/features/home/components/CatchCopy";
 import { ArticleGrid } from "@/features/blog-list/components/ArticleGrid";
 import { CategoryTabs } from "@/features/blog-list/components/CategoryTabs";
 import { ResultSummary } from "@/features/blog-list/components/ResultSummary";
@@ -14,6 +15,7 @@ import {
   buildArticlesHref,
   type RawArticlesSearchParams,
 } from "@/features/blog-list/lib/filter-articles";
+import { formatYearMonthLabel } from "@/shared/lib/published-at";
 
 export default async function Home({
   searchParams,
@@ -25,47 +27,67 @@ export default async function Home({
 
   const query = parseArticlesSearchParams(rawSearchParams);
   const filteredArticles = filterArticles(contents, query);
-  const pagination = paginateArticles(filteredArticles, query.page, query.pageSize);
+  const pagination = paginateArticles(
+    filteredArticles,
+    query.page,
+    query.pageSize,
+  );
+
+  // キーワード・ページ番号・表示件数だけの絞り込みではキャッチコピー帯のまま維持する
+  const filterLabel = query.category
+    ? query.category
+    : query.yearMonth
+      ? formatYearMonthLabel(query.yearMonth)
+      : null;
+
+  const heading = query.category
+    ? `「${query.category}」の記事一覧`
+    : query.yearMonth
+      ? `${formatYearMonthLabel(query.yearMonth)}の記事一覧`
+      : "最新の記事";
 
   return (
-    <SidebarLayout articles={contents} searchKeyword={query.keyword}>
-      {!query.hasActiveFilters && (
-        <section className="mb-10 border-b border-base-300 pb-8">
-          <h1 className="mb-3 text-3xl font-bold">{HERO.title}</h1>
-          <p className="text-base-content/60">{HERO.subtitle}</p>
-        </section>
+    <>
+      {filterLabel && (
+        <Breadcrumb
+          items={[{ label: "HOME", href: "/" }, { label: filterLabel }]}
+        />
       )}
 
-      <h2 className="mb-4 text-xl font-bold">最新の記事</h2>
-      <CategoryTabs
-        categories={aggregateCategories(contents).map((c) => c.name)}
-        active={query.category}
-      />
+      <SidebarLayout articles={contents} searchKeyword={query.keyword}>
+        {!filterLabel && <CatchCopy />}
 
-      {pagination.totalCount > 0 ? (
-        <>
-          <div className="my-4 flex flex-wrap items-center justify-between gap-2">
-            <ResultSummary
-              totalCount={pagination.totalCount}
-              displayStart={pagination.displayStart}
-              displayEnd={pagination.displayEnd}
-            />
-            <PageSizeSelect value={query.pageSize} />
-          </div>
-          <ArticleGrid articles={pagination.items} />
-          <div className="mt-8">
-            <Pagination
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              buildHref={(page) => buildArticlesHref(query, page)}
-            />
-          </div>
-        </>
-      ) : (
-        <p className="py-10 text-center text-sm text-base-content/60">
-          該当する記事がありません
-        </p>
-      )}
-    </SidebarLayout>
+        <h1 className="mb-4 text-xl font-bold">{heading}</h1>
+        <CategoryTabs
+          categories={aggregateCategories(contents).map((c) => c.name)}
+          active={query.category}
+        />
+
+        {pagination.totalCount > 0 ? (
+          <>
+            <div className="my-4 flex flex-wrap items-center justify-between gap-2">
+              <ResultSummary
+                totalCount={pagination.totalCount}
+                displayStart={pagination.displayStart}
+                displayEnd={pagination.displayEnd}
+              />
+              <PageSizeSelect value={query.pageSize} />
+            </div>
+            <ArticleGrid articles={pagination.items} />
+            <div className="mt-8">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                buildHref={(page) => buildArticlesHref(query, page)}
+              />
+            </div>
+          </>
+        ) : (
+          <p className="py-10 text-center text-sm text-base-content/60">
+            該当する記事がありません
+          </p>
+        )}
+      </SidebarLayout>
+    </>
   );
 }
