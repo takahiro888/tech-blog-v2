@@ -27,11 +27,13 @@
 - **UC-ARTICLE-FilterByCategory**（Reader）
   - カテゴリタブ（すべて / React / TypeScript ...）で記事を絞り込める
   - タブは記事に紐づくカテゴリから動的に生成される
+  - 絞り込み中は、ヘッダー直下がパンくず（`HOME > カテゴリ名`）に切り替わり、見出しも「◯◯」の記事一覧に変わる（[04_ui_design.md](./04_ui_design.md)参照）
 - **UC-ARTICLE-Search**（Reader）
   - サイドバーの検索ボックスに入力した語で、記事をタイトルの部分一致で絞り込める
   - 本文一致はスコープ外
 - **UC-ARTICLE-FilterByMonth**（Reader）
   - ARCHIVE（年月）から、その月に公開された記事へ絞り込める
+  - 絞り込み中は、ヘッダー直下がパンくず（`HOME > YYYY年M月`）に切り替わり、見出しも「YYYY年M月の記事一覧」に変わる（[04_ui_design.md](./04_ui_design.md)参照）
 - **UC-TOPIC-Browse**（Reader）
   - サイドバーの「カテゴリー」（一覧＋件数）を見て、興味のあるカテゴリの記事へ移動できる
 
