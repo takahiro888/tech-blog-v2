@@ -75,7 +75,6 @@ frontend/                        … アプリ本体一式をここに移動
         components/
           ArticleCard.tsx
           ArticleGrid.tsx
-          CategoryFilter.tsx
           Pagination.tsx          … ページ番号・前へ／次へ
           PageSizeSelect.tsx      … 表示件数セレクト
         lib/
