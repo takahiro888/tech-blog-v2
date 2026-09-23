@@ -71,9 +71,6 @@ frontend/                        … アプリ本体一式をここに移動
       profile/
         page.tsx                 … プロフィール（新規、内部ページ）
     features/
-      home/
-        components/
-          CatchCopy.tsx           … トップページの絞り込みなし時に表示するキャッチコピー帯（旧Hero。大見出しは廃止し、1行のキャッチコピーのみ）
       blog-list/
         components/
           ArticleCard.tsx
@@ -108,6 +105,7 @@ frontend/                        … アプリ本体一式をここに移動
         constants.ts
       components/
         layout/                  … ページの枠組みになる部品（Header / Footer / Breadcrumb 等）。Server Component中心。
+                                   Headerはロゴ・ナビに加えキャッチコピー行（全ページ共通で常時表示）も持つ（旧`features/home/CatchCopy`を統合）
                                    Breadcrumbはトップページの絞り込み時・記事詳細・プロフィールで共用する（「HOME > 現在地」表示）
                                    Client化が必要な最小単位（NavLink等）もここにフラットに置く
 ```
