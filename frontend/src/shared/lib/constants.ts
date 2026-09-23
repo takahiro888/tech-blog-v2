@@ -13,3 +13,5 @@ export const HERO = {
   title: "技術と、日々の余白。",
   subtitle: "つくって、試して、わかったこと。Web開発の学びをここに。",
 } as const;
+
+export const SIDEBAR_MESSAGE = "「わからない」は、前に進んでいる証拠。";
