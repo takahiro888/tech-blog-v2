@@ -11,7 +11,7 @@ export function ArchiveList({ archives }: { archives: ArchiveCount[] }) {
         {archives.map(({ month, count }) => (
           <li key={month}>
             <Link
-              href={`/blogs?month=${encodeURIComponent(month)}`}
+              href={`/?month=${encodeURIComponent(month)}`}
               className="flex items-center justify-between py-2 text-sm hover:text-blue-700"
             >
               <span>{label(month)}</span>

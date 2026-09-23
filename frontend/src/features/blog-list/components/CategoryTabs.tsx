@@ -13,7 +13,7 @@ export function CategoryTabs({
       {tabs.map((tab) => {
         const isActive = tab === "すべて" ? !active : tab === active;
         const href =
-          tab === "すべて" ? "/" : `/category=${encodeURIComponent(tab)}`;
+          tab === "すべて" ? "/" : `/?category=${encodeURIComponent(tab)}`;
         return (
           <Link
             key={tab}

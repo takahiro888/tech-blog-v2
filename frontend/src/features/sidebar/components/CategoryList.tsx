@@ -9,7 +9,7 @@ export function CategoryList({ categories }: { categories: CategoryCount[] }) {
         {categories.map(({ name, count }) => (
           <li key={name}>
             <Link
-              href={`/blogs?category=${encodeURIComponent(name)}`}
+              href={`/?category=${encodeURIComponent(name)}`}
               className="flex items-center justify-between py-2 text-sm hover:text-blue-700"
             >
               <span>{name}</span>
