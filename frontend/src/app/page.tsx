@@ -1,9 +1,7 @@
 import { getBlogList } from "@/external/microcms/blogs";
-import { aggregateCategories } from "@/features/sidebar/lib/aggregate";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import { ArticleGrid } from "@/features/blog-list/components/ArticleGrid";
-import { CategoryTabs } from "@/features/blog-list/components/CategoryTabs";
 import { ResultSummary } from "@/features/blog-list/components/ResultSummary";
 import { PageSizeSelect } from "@/features/blog-list/components/PageSizeSelect";
 import { Pagination } from "@/features/blog-list/components/Pagination";
@@ -43,7 +41,7 @@ export default async function Home({
     ? `「${query.category}」の記事一覧`
     : query.yearMonth
       ? `${formatYearMonthLabel(query.yearMonth)}の記事一覧`
-      : "最新の記事";
+      : null;
 
   return (
     <>
@@ -54,12 +52,7 @@ export default async function Home({
       )}
 
       <SidebarLayout articles={contents} searchKeyword={query.keyword}>
-
-        <h1 className="mb-4 text-xl font-bold">{heading}</h1>
-        <CategoryTabs
-          categories={aggregateCategories(contents).map((c) => c.name)}
-          active={query.category}
-        />
+        {heading && <h1 className="mb-4 text-xl font-bold">{heading}</h1>}
 
         {pagination.totalCount > 0 ? (
           <>
