@@ -22,3 +22,25 @@ export type Blog = {
   };
   publishedAt: string;
 };
+
+export type MicroCMSImage = {
+  url: string;
+  width: number;
+  height: number;
+};
+
+export type SnsLink = {
+  fieldId: string;
+  type: string;
+  url: string;
+};
+
+export type Profile = {
+  name: string;
+  role: string;
+  bio: string;
+  avatar?: MicroCMSImage;
+  mainImage?: MicroCMSImage;
+  content: string;
+  snsLinks?: SnsLink[];
+};
