@@ -97,6 +97,7 @@ frontend/                        … アプリ本体一式をここに移動
         client.ts                … createClientのみ
         blogs.ts                 … getBlogList / getBlogDetail
         profile.ts               … getProfile（オブジェクト形式のprofile）
+        about.ts                 … getAbout（オブジェクト形式のabout）
         types.ts                 … microCMSのレスポンス型
     shared/                      … 特定機能に依存しない共通コード
       lib/

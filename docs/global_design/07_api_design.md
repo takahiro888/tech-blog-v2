@@ -24,6 +24,7 @@
 | `getBlogList()` | 全記事の取得（トップ・一覧・サイドバー集計） | なし（将来: `limit` `offset`） | `Article[]`（公開日降順） |
 | `getBlogDetail(id)` | 記事1件の取得 | `id: string` | `Article`。存在しなければ`notFound`を呼び出し側で扱う |
 | `getProfile()` | 著者情報の取得（`/profile`と全ページのサイドバー著者カード） | なし | `Author`（`profile`はオブジェクト形式のため`getObject`で取得） |
+| `getAbout()` | このブログについての本文取得（`/about`） | なし | `About`（`about`はオブジェクト形式のため`getObject`で取得） |
 
 ### 取得方針
 
@@ -46,6 +47,7 @@
 | 記事詳細 | GET | `https://{serviceDomain}.microcms.io/api/v1/blogs/{contentId}` | |
 | カテゴリ一覧（任意） | GET | `.../api/v1/categories` | `categories`を独立コンテンツにした場合のみ |
 | プロフィール | GET | `.../api/v1/profile` | オブジェクト形式（1件のみ）。`/profile`と著者カードで使用 |
+| このブログについて | GET | `.../api/v1/about` | オブジェクト形式（1件のみ）。`/about`の本文取得に使用 |
 
 実際の呼び出しは`microcms-js-sdk`（`getList` / `getListDetail`）を使う。
 
