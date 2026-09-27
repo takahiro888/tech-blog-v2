@@ -31,7 +31,7 @@ export type MicroCMSImage = {
 
 export type SnsLink = {
   fieldId: string;
-  type: string;
+  type: string[];
   url: string;
 };
 

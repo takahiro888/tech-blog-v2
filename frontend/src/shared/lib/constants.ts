@@ -3,12 +3,6 @@ export const FALLBACK_THUMBNAIL =
 
 export const NEW_DAYS = 7;
 
-export const AUTHOR = {
-  name: "たかひろ",
-  role: "フロントエンドエンジニア",
-  bio: "コードを書いたり、仕組みを調べたり。日々の「なるほど」を、未来の自分と誰かのために残しています。",
-} as const;
-
 export const CATCH_COPY = {
   subtitle: "つくって、試して、わかったこと。Web開発の学びをここに。",
 } as const;
