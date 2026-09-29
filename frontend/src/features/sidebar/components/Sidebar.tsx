@@ -13,7 +13,7 @@ export function Sidebar({
 }: {
   articles: Blog[];
   searchKeyword?: string;
-  profile?: Profile;
+  profile: Profile;
 }) {
   return (
     <aside className="flex flex-col gap-8">
