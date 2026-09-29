@@ -11,7 +11,7 @@ const NAV_ITEMS = [
 
 export function Header() {
   return (
-    <header className="border-t-4 border-t-slate-800 border-b border-b-base-300 bg-base-100 shadow-sm">
+    <header className="sticky top-0 z-50 border-t-4 border-t-slate-800 border-b border-b-base-300 bg-base-100 shadow-sm">
       <div className="flex items-center justify-between px-16 py-6">
         <div>
           <Link href="/" className="flex items-center gap-3">
