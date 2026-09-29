@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { CATCH_COPY } from "@/shared/lib/constants";
 import { NavLink } from "./NavLink";
@@ -14,13 +15,10 @@ export function Header() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <span
-              aria-hidden
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-700 text-xl font-bold text-white"
-            >
-              m.
+            <Image src="/logo.svg" alt="" width={40} height={40} priority />
+            <span className="text-xl font-bold tracking-[0.2em]">
+              KAIZEN
             </span>
-            <span className="text-xl font-bold tracking-[0.2em]">MARGIN</span>
             <span aria-hidden className="h-5 w-px bg-base-300" />
             <span className="text-xs text-base-content/60">技術ブログ</span>
           </Link>
@@ -29,7 +27,10 @@ export function Header() {
             <ul className="flex h-full gap-6 text-sm">
               {NAV_ITEMS.map((item) => (
                 <li key={item.href}>
-                  <NavLink href={item.href} activePrefixes={item.activePrefixes}>
+                  <NavLink
+                    href={item.href}
+                    activePrefixes={item.activePrefixes}
+                  >
                     {item.label}
                   </NavLink>
                 </li>
