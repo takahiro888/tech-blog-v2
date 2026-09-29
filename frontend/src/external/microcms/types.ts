@@ -44,3 +44,8 @@ export type Profile = {
   content: string;
   snsLinks?: SnsLink[];
 };
+
+export type About = {
+  mainImage?: MicroCMSImage;
+  content: string;
+};
