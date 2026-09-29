@@ -11,37 +11,30 @@ const NAV_ITEMS = [
 
 export function Header() {
   return (
-    <header className="border-t-4 border-slate-800 bg-base-100 shadow-sm">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="flex h-16 items-center justify-between">
+    <header className="border-t-4 border-t-slate-800 border-b border-b-base-300 bg-base-100 shadow-sm">
+      <div className="flex items-center justify-between px-16 py-6">
+        <div>
           <Link href="/" className="flex items-center gap-3">
             <Image src="/logo.svg" alt="" width={40} height={40} priority />
-            <span className="text-xl font-bold tracking-[0.2em]">
-              KAIZEN
-            </span>
+            <span className="text-xl font-bold tracking-[0.2em]">KAIZEN</span>
             <span aria-hidden className="h-5 w-px bg-base-300" />
             <span className="text-xs text-base-content/60">技術ブログ</span>
           </Link>
-
-          <nav aria-label="メインナビゲーション" className="h-full">
-            <ul className="flex h-full gap-6 text-sm">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.href}>
-                  <NavLink
-                    href={item.href}
-                    activePrefixes={item.activePrefixes}
-                  >
-                    {item.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <p className="pt-3 text-sm text-base-content/60">
+            {CATCH_COPY.subtitle}
+          </p>
         </div>
-
-        <p className="border-t border-base-300 py-3 text-sm text-base-content/60">
-          {CATCH_COPY.subtitle}
-        </p>
+        <nav aria-label="メインナビゲーション">
+          <ul className="flex gap-6 text-sm">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.href}>
+                <NavLink href={item.href} activePrefixes={item.activePrefixes}>
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </header>
   );
