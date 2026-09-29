@@ -20,7 +20,7 @@ export function Header() {
             <span aria-hidden className="h-5 w-px bg-base-300" />
             <span className="text-xs text-base-content/60">技術ブログ</span>
           </Link>
-          <p className="pt-3 text-sm text-base-content/60">
+          <p className="pt-1 text-sm text-base-content/60">
             {CATCH_COPY.subtitle}
           </p>
         </div>
