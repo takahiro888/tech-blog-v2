@@ -20,7 +20,7 @@ export default async function Home({
   searchParams: Promise<RawArticlesSearchParams>;
 }) {
   const rawSearchParams = await searchParams;
-  const { contents } = await getBlogList();
+  const contents = await getBlogList();
 
   const query = parseArticlesSearchParams(rawSearchParams);
   const filteredArticles = filterArticles(contents, query);

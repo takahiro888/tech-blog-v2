@@ -18,7 +18,7 @@ export async function SidebarLayout({
   profile,
 }: SidebarLayoutProps) {
   const [sidebarArticles, sidebarProfile] = await Promise.all([
-    articles ?? getBlogList().then((res) => res.contents),
+    articles ?? getBlogList(),
     profile ?? getProfile(),
   ]);
 

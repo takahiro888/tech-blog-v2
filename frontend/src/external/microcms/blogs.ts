@@ -2,7 +2,7 @@ import { microcmsClient } from "./client";
 import type { Blog } from "./types";
 
 export function getBlogList() {
-  return microcmsClient.getList<Blog>({ endpoint: "blogs" });
+  return microcmsClient.getAllContents<Blog>({ endpoint: "blogs" });
 }
 
 export function getBlogDetail(contentId: string) {
