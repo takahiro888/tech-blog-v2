@@ -15,7 +15,7 @@ export function PageSizeSelect({ value }: { value: number }) {
   };
 
   return (
-    <label className="flex items-center gap-2 text-sm">
+    <label className="flex items-center gap-2 whitespace-nowrap text-sm">
       表示件数
       <select
         className="select select-bordered select-sm"
