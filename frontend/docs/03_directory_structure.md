@@ -70,6 +70,10 @@ frontend/                        … アプリ本体一式をここに移動
         page.tsx                 … このブログについて（新規）
       profile/
         page.tsx                 … プロフィール（新規、内部ページ）
+      privacy-policy/
+        page.tsx                 … プライバシーポリシー（新規。フッターからのみ遷移）
+      disclaimer/
+        page.tsx                 … 免責事項（新規。フッターからのみ遷移）
     features/
       blog-list/
         components/

@@ -49,6 +49,10 @@
    - microCMSに`profile`（オブジェクト形式）を作成し、`external/microcms/profile.ts`に`getProfile`を追加
    - `app/profile/page.tsx`（パンくず＋タイトル＋メイン画像＋本文＋サイドバー）を実装し、ヘッダーのナビ・著者カードのリンクを`/profile`（内部リンク）にする
    - 仕様は`docs/global_design/04_ui_design.md`の「プロフィールページ」を参照
+9. **フッターと規約系ページの作成**
+   - `shared/components/layout/Footer.tsx`（Server Component）を作り、`app/layout.tsx`でメインの後ろに置く。リンク一覧とコピーライトは`shared/lib/constants.ts`の定数から描画する
+   - フッターのリンク先`/privacy-policy`・`/disclaimer`を`/about`と同じ構成で作成する（本文の管理方法は要判断）。ページが未実装のままフッターを出すとリンク切れになるため、同じタイミングで用意する
+   - 仕様は`docs/global_design/04_ui_design.md`の「3.4 フッター」「8.5 プライバシーポリシー・免責事項」を参照
 
 各ステップごとにコミットを分けると、後から見直しやすくなる。
 
