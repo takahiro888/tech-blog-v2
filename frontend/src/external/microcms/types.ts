@@ -49,3 +49,7 @@ export type About = {
   mainImage?: MicroCMSImage;
   content: string;
 };
+
+export type LegalPage = {
+  content: string;
+};
