@@ -1,6 +1,7 @@
 import { getBlogDetail } from "@/external/microcms/blogs";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
+import { RichText } from "@/shared/components/RichText";
 
 export default async function BlogDetailPage({
   params,
@@ -26,12 +27,12 @@ export default async function BlogDetailPage({
         items={[{ label: "HOME", href: "/" }, { label: blog.title }]}
       />
       <SidebarLayout>
-        <article className="prose">
-          <h1>{blog.title}</h1>
-          <p className="text-sm text-base-content/60">
+        <article>
+          <h1 className="text-3xl font-bold">{blog.title}</h1>
+          <p className="mt-2 text-sm text-base-content/60">
             {blog.publishedAt.slice(0, 10)}
           </p>
-          <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+          <RichText html={blog.content} className="mt-8" />
         </article>
       </SidebarLayout>
     </>

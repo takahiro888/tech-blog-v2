@@ -1,6 +1,7 @@
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import Image from "next/image";
+import { RichText } from "@/shared/components/RichText";
 import { getAbout } from "@/external/microcms/about";
 
 export default async function AboutPage() {
@@ -21,10 +22,7 @@ export default async function AboutPage() {
             className="mb-8 w-full rounded-lg"
           />
         )}
-        <div
-          className="prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: about.content }}
-        />
+        <RichText html={about.content} />
       </SidebarLayout>
     </>
   );

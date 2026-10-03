@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getProfile } from "@/external/microcms/profile";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
+import { RichText } from "@/shared/components/RichText";
 
 export default async function ProfilePage() {
   const profile = await getProfile();
@@ -24,10 +25,7 @@ export default async function ProfilePage() {
             className="mb-8 w-full rounded-lg"
           />
         )}
-        <div
-          className="prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: profile.content }}
-        />
+        <RichText html={profile.content} />
       </SidebarLayout>
     </>
   );
