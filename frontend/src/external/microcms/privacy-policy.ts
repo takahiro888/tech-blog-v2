@@ -1,5 +1,5 @@
-import { microcmsClient } from "@/external/microcms/client";
-import type { LegalPage } from "@/external/microcms/types";
+import { microcmsClient } from "./client";
+import type { LegalPage } from "./types";
 
 export function getPrivacyPolicy() {
   return microcmsClient.getObject<LegalPage>({ endpoint: "privacy-policy" });
