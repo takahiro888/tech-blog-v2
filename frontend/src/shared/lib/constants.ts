@@ -8,3 +8,11 @@ export const CATCH_COPY = {
 } as const;
 
 export const SIDEBAR_MESSAGE = "「わからない」は、前に進んでいる証拠。";
+
+export const FOOTER_LINKS = [
+  { href: "/", label: "HOME" },
+  { href: "/privacy-policy", label: "プライバシーポリシー" },
+  { href: "/disclaimer", label: "免責事項" },
+] as const;
+
+export const COPYRIGHT = "© 2026 KAIZEN.";
