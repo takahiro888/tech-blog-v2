@@ -360,6 +360,7 @@
 | UI部品 | 置き場所（想定） | 種別 |
 |---|---|---|
 | Header（キャッチコピー行を含む） / Footer / ScrollTopButton / Breadcrumb | `shared/components/layout/` | Header・Footer・Breadcrumbは Server、ScrollTopは Client。Footerはリンク行とコピーライトのみで状態を持たない（[3.4](#34-フッター)参照）。キャッチコピーはHeaderの一部として全ページ共通で表示する（旧Hero／CatchCopyを統合）。Breadcrumbはトップページの絞り込み時・記事詳細・プロフィールで共用するため`shared`に置く |
+| RichText | `shared/components/` | Server。microCMSのリッチエディタHTMLを描画する。`prose`（Tailwind Typography）のスタイル指定をここに集約し、記事詳細・about・プロフィール・規約系ページの本文で共用する。サニタイズを入れる場合もこの部品で行う |
 | ArticleCard / ArticleThumbnail / ArticleGrid | `features/blog-list/components/` | Card・Thumbnailは Server、Gridは Client（絞り込み・ページネーションの結果を並べる） |
 | SearchBox / Pagination / PageSizeSelect | `features/blog-list/components/` | Client |
 | ArticleBody | `features/blog-detail/components/` | Server |
