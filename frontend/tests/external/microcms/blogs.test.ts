@@ -2,7 +2,7 @@ import { describe, it, vi, expect } from "vitest";
 
 vi.mock("@/external/microcms/client", () => ({
   microcmsClient: {
-    getList: vi.fn().mockResolvedValue({ contents: [], totalCount: 0 }),
+    getAllContents: vi.fn().mockResolvedValue([]),
     getListDetail: vi.fn().mockResolvedValue({ id: "1" }),
   },
 }));
@@ -13,7 +13,7 @@ import { microcmsClient } from "@/external/microcms/client";
 describe("getBlogList", () => {
   it("blogsエンドポイントを指定してSDKを呼ぶ", async () => {
     await getBlogList();
-    expect(microcmsClient.getList).toHaveBeenCalledWith({ endpoint: "blogs" });
+    expect(microcmsClient.getAllContents).toHaveBeenCalledWith({ endpoint: "blogs" });
   });
 });
 
