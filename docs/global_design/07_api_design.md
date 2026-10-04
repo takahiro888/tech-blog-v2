@@ -91,7 +91,7 @@
 |---|---|---|
 | `MICROCMS_SERVICE_DOMAIN` | microCMSのサービスドメイン | サーバー専用 |
 | `MICROCMS_API_KEY` | 読み取り用APIキー（GET権限のみ） | サーバー専用。`NEXT_PUBLIC_`を付けない |
-| `SITE_URL` | サイトのオリジン（例: 本番は`https://<本番ドメイン>`、ローカルは`http://localhost:3000`）。シェアボタンの記事URLとOGPの`metadataBase`に使う | サーバー専用。シェアボタンはServer Componentで組み立てるため`NEXT_PUBLIC_`は不要。Vercelでは本番環境の値に本番ドメインを設定する |
+| `SITE_URL` | サイトのオリジン（例: 本番は`https://<本番ドメイン>`、ローカルは`http://localhost:3000`。末尾の`/`は付けない）。ドメイン取得前は`https://tech-blog-v2-lemon.vercel.app`を使い、取得後に値だけ差し替える。シェアボタンの記事URLとOGPの`metadataBase`に使う | サーバー専用。シェアボタンはServer Componentで組み立てるため`NEXT_PUBLIC_`は不要。Vercelでは本番環境の値に本番ドメインを設定する |
 
 - 未設定の場合、現状のクライアント生成は空文字で続行してしまう。起動時に検知して失敗させる（実装時の改善候補）
 - APIキーはコミットしない（`.env`はGit管理外）
