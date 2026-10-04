@@ -87,6 +87,11 @@ frontend/                        … アプリ本体一式をここに移動
       blog-detail/
         components/
           ArticleBody.tsx
+          ShareButtons.tsx        … X・Facebook・はてなブックマークのシェアボタン（Server Component。ツールチップはdaisyUIのCSSのみ）
+          icons/                  … 各サービスのロゴのインラインSVGコンポーネント（XIcon / FacebookIcon / HatenaBookmarkIcon）
+        lib/
+          share-links.ts          … 記事URLとタイトルから各サービスの共有画面URLを組み立てる純粋関数
+          share-links.test.ts
       profile/
         components/
           ProfileBody.tsx        … 本文（ArticleBodyのスタイルを共用してもよい）

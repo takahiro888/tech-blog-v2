@@ -53,6 +53,12 @@
    - `shared/components/layout/Footer.tsx`（Server Component）を作り、`app/layout.tsx`でメインの後ろに置く。リンク一覧とコピーライトは`shared/lib/constants.ts`の定数から描画する
    - フッターのリンク先`/privacy-policy`・`/disclaimer`を`/about`と同じ構成で作成する（本文の管理方法は要判断）。ページが未実装のままフッターを出すとリンク切れになるため、同じタイミングで用意する
    - 仕様は`docs/global_design/04_ui_design.md`の「3.4 フッター」「8.5 プライバシーポリシー・免責事項」を参照
+10. **記事詳細のシェアボタン**
+    - `.env`とVercelに`SITE_URL`を追加する（`docs/global_design/07_api_design.md`の「認証・環境変数」参照）
+    - `features/blog-detail/lib/share-links.ts`にシェアURLを組み立てる純粋関数を作り、先にテストを書く
+    - `features/blog-detail/components/ShareButtons.tsx`（Server Component）とロゴのSVGを作り、`app/blogs/[id]/page.tsx`で本文の左（PC）／末尾（スマホ）に配置する
+    - 同じタイミングで記事詳細の`generateMetadata`にOGP（`openGraph`・`twitter`）を、ルートの`metadata`に`metadataBase`を設定する
+    - 仕様は`docs/global_design/04_ui_design.md`の「6.1 シェアボタン」を参照
 
 各ステップごとにコミットを分けると、後から見直しやすくなる。
 
@@ -81,7 +87,7 @@ Claudeがコミットを作成する際は、**`git commit`を実行する前に
 
 **テスト範囲を絞る方針**を取る。デザイン・見た目に関するテスト（コンポーネントの表示内容やレイアウトの検証等）は基本的に書かない。**ロジック部分にのみテストコードを書く**。
 
-- 対象にする例: `external/microcms/`の関数（microCMS SDKへの呼び出し内容の検証）、データ変換・集計処理（将来追加するTOPICS/ARCHIVEの集計等）、条件分岐を含むユーティリティ関数（`ArticleGrid`の表示件数・`hasMore`判定のような、propsに応じて挙動が変わる部分等）
+- 対象にする例: `external/microcms/`の関数（microCMS SDKへの呼び出し内容の検証）、シェアURLの組み立て（`features/blog-detail/lib/share-links.ts`。日本語や`&`・`#`を含むタイトルが正しくエンコードされるか等）、データ変換・集計処理（将来追加するTOPICS/ARCHIVEの集計等）、条件分岐を含むユーティリティ関数（`ArticleGrid`の表示件数・`hasMore`判定のような、propsに応じて挙動が変わる部分等）
 - 対象にしない例: コンポーネントの見た目・レイアウトの検証、単純にpropsをそのまま表示するだけのコンポーネントのレンダリングテスト
 - CIを通すための「最初の1件」も、デザイン寄りのテストではなくロジックのテスト（例: `external/microcms/blogs.ts`が正しいエンドポイント・パラメータでSDKを呼んでいるかの検証）にする
 - 既存の`npm run test` / `npm run test:run`（vitest）をそのまま利用する

@@ -13,6 +13,7 @@
 
 - Tailwind CSS v4（`@tailwindcss/postcss`）
 - daisyUI v5（現状`ArticleCard`等で`card`, `btn`等のクラスを使用）
+- アイコン: アイコンライブラリ（`react-icons`等）は導入せず、必要なロゴ（シェアボタンのX・Facebook・はてなブックマーク等）はインラインSVGのコンポーネントとして持つ。使う数が少なく、依存を増やすほどではないため
 
 ## データソース
 
