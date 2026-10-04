@@ -110,6 +110,7 @@ frontend/                        … アプリ本体一式をここに移動
       components/
         RichText.tsx             … microCMSのリッチエディタHTMLを描画する共通部品（`prose`のスタイル指定を1か所に集約）。
                                    記事詳細・about・profile・privacy-policy・disclaimerの本文で共用する。Server Component
+        PageTitle.tsx            … 固定ページのh1（タイトル＋下罫線＋本文との余白）。about・profile・privacy-policy・disclaimerで共用する。Server Component
         layout/                  … ページの枠組みになる部品（Header / Footer / Breadcrumb 等）。Server Component中心。
                                    Headerはロゴ・ナビに加えキャッチコピー行（全ページ共通で常時表示）も持つ（旧`features/home/CatchCopy`を統合）
                                    Breadcrumbはトップページの絞り込み時・記事詳細・プロフィールで共用する（「HOME > 現在地」表示）
