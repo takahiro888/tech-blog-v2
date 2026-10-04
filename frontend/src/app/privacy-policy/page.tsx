@@ -2,6 +2,7 @@ import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import { getPrivacyPolicy } from "@/external/microcms/privacy-policy";
 import { RichText } from "@/shared/components/RichText";
+import { PageTitle } from "@/shared/components/PageTitle";
 
 export default async function PrivacyPolicyPage() {
   const privacyPolicy = await getPrivacyPolicy();
@@ -14,7 +15,7 @@ export default async function PrivacyPolicyPage() {
         ]}
       />
       <SidebarLayout>
-        <h1 className="text-2xl font-bold">プライバシーポリシー</h1>
+        <PageTitle>プライバシーポリシー</PageTitle>
         <RichText html={privacyPolicy.content} /> 
       </SidebarLayout>
     </>

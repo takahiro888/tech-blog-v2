@@ -3,6 +3,7 @@ import { getProfile } from "@/external/microcms/profile";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 import { RichText } from "@/shared/components/RichText";
+import { PageTitle } from "@/shared/components/PageTitle";
 
 export default async function ProfilePage() {
   const profile = await getProfile();
@@ -13,9 +14,7 @@ export default async function ProfilePage() {
         items={[{ label: "HOME", href: "/" }, { label: "プロフィール" }]}
       />
       <SidebarLayout>
-        <h1 className="mb-6 border-b border-base-300 pb-4 text-3xl font-bold">
-          プロフィール
-        </h1>
+        <PageTitle>プロフィール</PageTitle>
         {profile.mainImage && (
           <Image
             src={profile.mainImage.url}

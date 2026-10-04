@@ -3,6 +3,7 @@ import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import Image from "next/image";
 import { RichText } from "@/shared/components/RichText";
 import { getAbout } from "@/external/microcms/about";
+import { PageTitle } from "@/shared/components/PageTitle";
 
 export default async function AboutPage() {
   const about = await getAbout();
@@ -12,7 +13,7 @@ export default async function AboutPage() {
         items={[{ label: "HOME", href: "/" }, { label: "このブログについて" }]}
       />
       <SidebarLayout>
-        <h1 className="text-2xl font-bold">このブログについて</h1>
+        <PageTitle>このブログについて</PageTitle>
         {about.mainImage && (
           <Image
             src={about.mainImage.url}
