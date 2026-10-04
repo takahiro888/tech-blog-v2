@@ -13,7 +13,11 @@ export function ArticleCard({ article }: { article: Blog }) {
       href={`/blogs/${article.id}`}
       className="group flex flex-col gap-4 py-6 sm:flex-row"
     >
-      <ArticleThumbnail label={label} theme={getCardTheme(categories)} />
+      <ArticleThumbnail
+        label={label}
+        theme={getCardTheme(categories)}
+        eyecatch={article.eyecatch}
+      />
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 text-xs text-base-content/60">
           <time dateTime={article.publishedAt}>
