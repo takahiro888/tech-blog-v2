@@ -4,6 +4,7 @@ import { buildArticleMetadata } from "@/features/blog-detail/lib/article-metadat
 import { getArticle } from "@/features/blog-detail/lib/get-article";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
+import { notFound } from "next/navigation";
 
 type BlogDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -20,14 +21,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { id } = await params;
   const blog = await getArticle(id);
 
-  if (!blog) {
-    return (
-      <SidebarLayout>
-        <h1 className="text-2xl font-bold">ブログ記事詳細</h1>
-        <p>ブログ記事が見つかりませんでした。</p>
-      </SidebarLayout>
-    );
-  }
+  if (!blog) notFound();
 
   return (
     <>
