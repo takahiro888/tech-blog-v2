@@ -15,6 +15,14 @@
 - daisyUI v5（現状`ArticleCard`等で`card`, `btn`等のクラスを使用）
 - アイコン: アイコンライブラリ（`react-icons`等）は導入せず、必要なロゴ（シェアボタンのX・Facebook・はてなブックマーク等）はインラインSVGのコンポーネントとして持つ。使う数が少なく、依存を増やすほどではないため
 
+## セキュリティ
+
+- `sanitize-html`（+ `@types/sanitize-html`）— microCMSのリッチエディタHTMLをServer Componentでサニタイズする（[global_design/07_api_design.md](../../docs/global_design/07_api_design.md)の4.1参照）
+
+## PWA
+
+- 追加ライブラリなし。Next.js標準の`app/manifest.ts`でマニフェストを生成する。Service Worker（オフライン対応・プッシュ通知）は導入しない（[global_design/04_ui_design.md](../../docs/global_design/04_ui_design.md)の12章参照）
+
 ## データソース
 
 - microCMS（`microcms-js-sdk`）— ブログ記事のヘッドレスCMS

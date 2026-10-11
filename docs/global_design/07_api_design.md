@@ -22,7 +22,7 @@
 | 関数 | 用途 | 引数 | 戻り値 |
 |---|---|---|---|
 | `getBlogList()` | 全記事の取得（トップ・一覧・サイドバー集計） | なし（将来: `limit` `offset`） | `Article[]`（公開日降順） |
-| `getBlogDetail(id)` | 記事1件の取得 | `id: string` | `Article`。存在しなければ`notFound`を呼び出し側で扱う |
+| `getBlogDetail(id)` | 記事1件の取得 | `id: string` | `Article \| null`。microCMSが404を返したときだけ`null`を返し、それ以外のエラーはそのまま投げる。`null`のとき呼び出し側（記事詳細）で`notFound()`を呼ぶ |
 | `getProfile()` | 著者情報の取得（`/profile`と全ページのサイドバー著者カード） | なし | `Author`（`profile`はオブジェクト形式のため`getObject`で取得） |
 | `getAbout()` | このブログについての本文取得（`/about`） | なし | `About`（`about`はオブジェクト形式のため`getObject`で取得） |
 
@@ -100,16 +100,42 @@
 
 | 状況 | 発生源 | 扱い |
 |---|---|---|
-| 記事が存在しない（404） | `getBlogDetail` | 呼び出し側（`/blogs/[id]/page.tsx`）で`notFound()`を呼び、404ページを出す |
-| 認証エラー（401/403）・ネットワーク障害 | microCMS | 例外をそのまま投げる。`error.tsx`で表示。ビルド時は失敗として検知 |
+| 記事が存在しない（404） | `getBlogDetail` | SDKの例外を`isMicroCMSRequestError`で判定し、`status === 404`のときだけ`null`を返す。記事詳細（`generateMetadata`とページ本体）で`null`なら`notFound()`を呼び、`app/not-found.tsx`を出す |
+| 認証エラー（401/403）・ネットワーク障害 | microCMS | 例外をそのまま投げる（404扱いにしない）。`error.tsx`で表示。ビルド時は失敗として検知 |
 | レート制限（429） | microCMS | 例外として扱う。キャッシュにより通常は発生しにくい |
 | 想定外のフィールド欠落 | microCMS | 変換層で既定値に落とし、画面を壊さない |
 
+- 404の判定は`external/`層に閉じ込める。`isMicroCMSRequestError`はmicroCMS SDKの関数のため、`features/`や`app/`から使うとSDKへの依存が外に漏れる（[frontend/02_architecture.md](../../frontend/docs/02_architecture.md)の「外部層の差し替え可能性」）。`features/blog-detail/lib/get-article.ts`は`getBlogDetail`を`cache`で包むだけにし、エラーを握りつぶす`.catch(() => null)`は外す
+- この判定は条件分岐を含むロジックなので、`tests/external/microcms/blogs.test.ts`に「404のとき`null`を返す」「500のときは例外を投げる」のテストを追加する
+
 ## 4. セキュリティ
 
-- 本文HTMLは`dangerouslySetInnerHTML`で描画するため、**サニタイズ**を通す（許可タグを絞る）。入稿者は本人だが、防御を一段入れておく
+- 本文HTMLは`dangerouslySetInnerHTML`で描画するため、**サニタイズ**を通す（許可タグを絞る）。入稿者は本人だが、防御を一段入れておく（詳細は下記4.1）
 - APIキーをクライアントバンドルに含めない（`external/`はサーバー専用。`server-only`パッケージでの保護を検討）
 - 外部リンク（SNS）は`rel="noopener noreferrer"`、新規タブで開く
+
+### 4.1 リッチテキストのサニタイズ
+
+**実施する理由**
+
+- 入稿者は本人だけだが、microCMSのアカウントやAPIキーが漏れた場合、本文に`<script>`や`onerror`属性を仕込まれると、閲覧者のブラウザでスクリプトが実行される（XSS）。サニタイズはその被害を防ぐ最後の防御になる
+- 処理はServer Componentの中だけで行うため、閲覧者が読み込むJavaScriptは増えない。費用対効果が高い
+- ポートフォリオとして「外部由来のHTMLを無条件に信用しない」設計を示せる
+
+**実装方針**
+
+| 項目 | 方針 |
+|---|---|
+| ライブラリ | `sanitize-html`（型は`@types/sanitize-html`）。DOMを必要とせずNode.jsで動くため、Server Componentで使える。`DOMPurify`はブラウザのDOMが前提で、サーバーで使うには`jsdom`が必要になり重いため採用しない |
+| 置き場所 | `shared/lib/sanitize-html.ts`に`sanitizeRichText(html)`として置き、`shared/components/RichText.tsx`の中で呼ぶ。本文を描画する全ページ（記事詳細・about・プロフィール・規約系）に自動で効く |
+| 許可するタグ | microCMSのリッチエディタが出力するもの: `h1`〜`h5`・`p`・`br`・`hr`・`strong`・`em`・`u`・`s`・`code`・`pre`・`blockquote`・`ul`・`ol`・`li`・`a`・`img`・`figure`・`figcaption`・`table`・`thead`・`tbody`・`tr`・`th`・`td`・`span`・`div` |
+| 許可する属性 | `a`: `href`・`target`・`rel` ／ `img`: `src`・`alt`・`width`・`height` ／ 見出し: `id`（目次のアンカー用） ／ 全タグ: `class`（コードブロックの言語指定など） |
+| URLのスキーム | `http`・`https`・`mailto`のみ。`javascript:`は除去される |
+| 外部リンク | `a`に`target="_blank"`が付いている場合は`rel="noopener noreferrer"`を付与する（`transformTags`） |
+| 埋め込み（`iframe`） | 現時点では許可しない。YouTube等を埋め込むことになったら、`allowedIframeHostnames`で許可するドメインを限定して追加する |
+
+- 許可リストに無いタグは、タグだけ除去して中の文字は残る（`sanitize-html`の既定動作）。表示が崩れた場合は、まず許可リストの漏れを疑う
+- 許可リストの設定はロジックなので、`tests/shared/lib/sanitize-html.test.ts`で「`<script>`が除去される」「`onerror`属性が除去される」「`javascript:`のリンクが除去される」「見出し・コードブロックは残る」を確認する
 
 ## 5. 再検証（キャッシュ更新）
 

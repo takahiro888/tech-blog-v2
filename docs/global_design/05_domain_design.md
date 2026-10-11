@@ -84,7 +84,6 @@
 | TOPICS集計 | 記事群からカテゴリごとの件数を数える。0件のカテゴリは出さない。表示順は件数の降順、同数はカテゴリ名順（モックの並びと異なる場合は実装時に調整） | `aggregateCategories(articles)` |
 | ARCHIVE集計 | 記事群から`YYYY-MM`ごとの件数を数える。新しい月が先頭 | `aggregateArchives(articles)` |
 | フィルタタブ生成 | 「すべて」＋`aggregateCategories`の結果 | `buildCategoryTabs(articles)` |
-| 最新記事の抽出 | サイドバー用。表示中の記事を除き、新しい順に上位N件 | `pickLatest(articles, { exclude, limit })` |
 
 ## 置き場所
 

@@ -54,6 +54,7 @@ frontend/                        … アプリ本体一式をここに移動
   vitest.config.ts
   .env
   public/
+    icons/                       … PWA用アイコン（icon-192.png / icon-512.png / icon-maskable-512.png）
   docs/                          … 本ドキュメント群の移動先（旧 docs/frontend/）
     01_tech_stack.md
     02_architecture.md
@@ -62,7 +63,10 @@ frontend/                        … アプリ本体一式をここに移動
     05_development_guide.md
   src/
     app/
-      layout.tsx
+      layout.tsx                 … metadata（title.template・metadataBase・openGraph）とviewport（themeColor）もここで持つ
+      not-found.tsx              … 404ページ。どのルートにも一致しないURLと、記事詳細のnotFound()の両方で使われる
+      manifest.ts                … PWAのマニフェスト（名前・アイコン・テーマ色）
+      icon.svg / apple-icon.png  … ファビコン・iOSのホーム画面用アイコン（ファイル規約で自動的に読み込まれる）
       page.tsx                   … トップページ（Server Component、featuresを組み立てるだけ）。記事一覧を兼ねる（フィルタ・検索・ページネーション込み）
       blogs/
         [id]/page.tsx             … 記事詳細ページ。旧`blogs/page.tsx`（記事一覧）は廃止し、トップページ（`/`）に統合した
@@ -85,6 +89,7 @@ frontend/                        … アプリ本体一式をここに移動
           PageSizeSelect.tsx       … 表示件数セレクト
         lib/
           filter-articles.ts       … searchParamsのパース、絞り込み、ページ分割、一覧URLの組み立てなどの純粋関数
+          list-metadata.ts         … 絞り込み条件からトップページの見出し（h1）とMetadata（title・description・robots）を組み立てる
       blog-detail/
         components/
           ArticleDetail.tsx        … シェア列とArticleBodyの配置（PCは左にシェア列、スマホは本文の末尾）。記事の絶対URLを組み立ててShareButtonsに渡す
@@ -92,7 +97,7 @@ frontend/                        … アプリ本体一式をここに移動
           ShareButtons.tsx         … X・Facebook・はてなブックマークのシェアボタン（Server Component。ツールチップはdaisyUIのCSSのみ）
           icons/                   … 各サービスのロゴのインラインSVGコンポーネント（XIcon / FacebookIcon / HatenaBookmarkIcon）
         lib/
-          get-article.ts           … 記事1件の取得。React.cacheでgenerateMetadataとページ本体の取得を共有し、取得失敗時はnullを返す
+          get-article.ts           … 記事1件の取得。React.cacheでgenerateMetadataとページ本体の取得を共有する（存在しない記事のnullはexternal層のgetBlogDetailが返す）
           article-metadata.ts      … 記事のMetadata（title・description・canonical・openGraph・twitter）を組み立てる
           share-links.ts           … 記事URLとタイトルから各サービスの共有画面URLを組み立てる純粋関数（テストは`frontend/tests/features/blog-detail/lib/share-links.test.ts`）
       sidebar/
@@ -108,7 +113,7 @@ frontend/                        … アプリ本体一式をここに移動
     external/
       microcms/
         client.ts                … createClientのみ
-        blogs.ts                 … getBlogList / getBlogDetail
+        blogs.ts                 … getBlogList / getBlogDetail（microCMSが404を返したときだけnullを返す）
         profile.ts               … getProfile（オブジェクト形式のprofile）
         about.ts                 … getAbout（オブジェクト形式のabout）
         privacy-policy.ts        … プライバシーポリシー本文の取得
@@ -117,7 +122,8 @@ frontend/                        … アプリ本体一式をここに移動
     shared/                      … 特定機能に依存しない共通コード
       lib/
         types.ts                 … アプリ内で使うドメイン寄りの型（Article等）
-        constants.ts
+        constants.ts             … SITE_NAME・SITE_DESCRIPTION・CATCH_COPY・FOOTER_LINKS など
+        sanitize-html.ts         … sanitizeRichText（リッチエディタHTMLの許可タグ・属性を絞る）。RichTextから呼ぶ
         site-url.ts              … getSiteUrl（環境変数SITE_URLの読み取り）/ buildAbsoluteUrl（絶対URLの組み立て）。layoutのmetadataBaseと記事詳細で共用
         published-at.ts          … 投稿日の表示形式・年月ラベル
         sort-article.ts          … 記事の並び替え

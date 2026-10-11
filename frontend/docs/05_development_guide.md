@@ -60,6 +60,31 @@
     - 記事詳細の`generateMetadata`にOGP（`openGraph`・`twitter`）を、ルートの`metadata`に`metadataBase`を設定する。メタデータの組み立ては`features/blog-detail/lib/article-metadata.ts`、記事の取得は`get-article.ts`に置き、`app/blogs/[id]/page.tsx`は組み立てだけにする
     - 仕様は`docs/global_design/04_ui_design.md`の「6.1 シェアボタン」を参照
 
+### フェーズ3: SEO・堅牢性・PWA
+
+11. **存在しない記事の404表示**
+    - `external/microcms/blogs.ts`の`getBlogDetail`を、microCMSが404を返したときだけ`null`を返す形にする（`isMicroCMSRequestError`で判定。それ以外のエラーは投げる）。先に`tests/external/microcms/blogs.test.ts`へ404・500のテストを追加する
+    - `features/blog-detail/lib/get-article.ts`の`.catch(() => null)`を外す
+    - `app/not-found.tsx`を作り、記事詳細の`generateMetadata`とページ本体で記事が無ければ`notFound()`を呼ぶ（独自の「見つかりませんでした」表示は削除）
+    - 仕様は`docs/global_design/04_ui_design.md`の「8.6 404ページ」、`docs/global_design/07_api_design.md`の「3. エラーハンドリング」を参照
+12. **ページごとのメタデータ**
+    - `shared/lib/constants.ts`に`SITE_NAME`・`SITE_DESCRIPTION`を追加し、`app/layout.tsx`の`metadata`を`title.default`・`title.template`の形にする
+    - about・プライバシーポリシー・免責事項・404は静的な`metadata`、プロフィールは`generateMetadata`で設定する
+    - トップページは`features/blog-list/lib/list-metadata.ts`で絞り込み条件からtitle・description・robotsを組み立て、`app/page.tsx`の見出しの組み立てもこの関数に寄せる。分岐を含むので`tests/features/blog-list/lib/list-metadata.test.ts`を書く
+    - 仕様は`docs/global_design/04_ui_design.md`の「10.1 ページごとのメタデータ」を参照
+13. **リッチテキストのサニタイズ**
+    - `npm install sanitize-html`・`npm install -D @types/sanitize-html`
+    - `shared/lib/sanitize-html.ts`に`sanitizeRichText`を作り、先に`tests/shared/lib/sanitize-html.test.ts`を書く。`RichText.tsx`で描画前に呼ぶ
+    - 記事詳細・about・プロフィール・規約系ページの表示が崩れていないか確認する
+    - 仕様は`docs/global_design/07_api_design.md`の「4.1 リッチテキストのサニタイズ」を参照
+14. **PWA対応**
+    - `app/icon.svg`から192・512・maskable 512のPNGを書き出し、`public/icons/`に置く
+    - `app/manifest.ts`を作り、`app/layout.tsx`に`viewport`（`themeColor`）を追加する
+    - ChromeのDevToolsの「Application」→「Manifest」でエラーが無いこと、本番でホーム画面に追加できることを確認する
+    - 仕様は`docs/global_design/04_ui_design.md`の「12. PWA」を参照
+15. **記事カードの要約の削除**
+    - `features/blog-list/components/ArticleCard.tsx`から`excerpt`の表示を削除する（microCMSの`excerpt`フィールドと型は、記事詳細のdescription用に残す）
+
 各ステップごとにコミットを分けると、後から見直しやすくなる。
 
 ## コミット規約
@@ -87,7 +112,7 @@ Claudeがコミットを作成する際は、**`git commit`を実行する前に
 
 **テスト範囲を絞る方針**を取る。デザイン・見た目に関するテスト（コンポーネントの表示内容やレイアウトの検証等）は基本的に書かない。**ロジック部分にのみテストコードを書く**。
 
-- 対象にする例: `external/microcms/`の関数（microCMS SDKへの呼び出し内容の検証）、シェアURLの組み立て（`features/blog-detail/lib/share-links.ts`。日本語や`&`・`#`を含むタイトルが正しくエンコードされるか等）、データ変換・集計処理（将来追加するTOPICS/ARCHIVEの集計等）、条件分岐を含むユーティリティ関数（`ArticleGrid`の表示件数・`hasMore`判定のような、propsに応じて挙動が変わる部分等）
+- 対象にする例: `external/microcms/`の関数（microCMS SDKへの呼び出し内容の検証）、シェアURLの組み立て（`features/blog-detail/lib/share-links.ts`。日本語や`&`・`#`を含むタイトルが正しくエンコードされるか等）、`getBlogDetail`の404判定、トップページのメタデータの組み立て、サニタイズの許可リスト、データ変換・集計処理（将来追加するTOPICS/ARCHIVEの集計等）、条件分岐を含むユーティリティ関数（`ArticleGrid`の表示件数・`hasMore`判定のような、propsに応じて挙動が変わる部分等）
 - 対象にしない例: コンポーネントの見た目・レイアウトの検証、単純にpropsをそのまま表示するだけのコンポーネントのレンダリングテスト
 - CIを通すための「最初の1件」も、デザイン寄りのテストではなくロジックのテスト（例: `external/microcms/blogs.ts`が正しいエンドポイント・パラメータでSDKを呼んでいるかの検証）にする
 - 既存の`npm run test` / `npm run test:run`（vitest）をそのまま利用する

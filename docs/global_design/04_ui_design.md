@@ -16,7 +16,7 @@
 | プロフィール | `/profile` | パンくず＋タイトル＋メイン画像＋本文＋サイドバー | 画像⑤（パンくず）／参考画像（別ブログの例。本文構成のみ） |
 | プライバシーポリシー | `/privacy-policy` | パンくず＋タイトル＋本文（新規。フッターからのみ遷移） | なし（`/about`と同じ構成で作る） |
 | 免責事項 | `/disclaimer` | パンくず＋タイトル＋本文（新規。フッターからのみ遷移） | なし（`/about`と同じ構成で作る） |
-| 404 | （自動） | 記事が存在しない場合 | なし |
+| 404 | （自動） | 存在しないURL・記事IDの場合。見出し＋説明＋HOMEへのリンク（[8.6](#86-404ページnot-found)参照） | なし |
 
 ## 2. 画面遷移図
 
@@ -40,7 +40,7 @@
                 └────────────────────────────────────────────────────────┘
 
    [記事詳細] ─ パンくず HOME ──▶ [/]
-             └ サイドバー「ARTICLES」──▶ [別の記事詳細]
+   [404] ─ HOMEへ戻る ──▶ [/]
 ```
 
 - 旧案では「もっと見る」ボタンで`/`から`/blogs`（全件一覧）へ遷移していたが、`/`自体がページネーション付きの全件一覧になったため、この遷移は廃止した
@@ -146,7 +146,7 @@
 │ （絞り込み時のみ）「◯◯」の記事一覧 ／ ◯年◯月の記事一覧 │ [🔍 記事を検索] │
 │ ┌────────┐ 2026.09.14 [新着]        │ ┌プロフィール┐ │
 │ │サムネ  │ 記事タイトル                          │ │ (m_)        │ │
-│ └────────┘ 要約  [TypeScript]                    │ │ ある Web…   │ │
+│ └────────┘ [TypeScript]                          │ │ ある Web…   │ │
 │ ────────────────────────────────────────────    │ └   [more]   ┘ │
 │ ┌────────┐ …                                     │ カテゴリー       │
 │ 30件中 1〜10件を表示     [表示件数 10件▾]          │ React        1  │
@@ -210,8 +210,8 @@
 ```
 ┌──────────┐  2026.09.14 [新着]
 │MARGIN/TECH NOTE│  TypeScriptの型を、もう一歩使いこなす。
-│ TypeScript │  ユニオン型と型ガードで、安全で読みやすいコードに。
-│type Safe=…│  [TypeScript]
+│ TypeScript │  [TypeScript]
+│type Safe=…│
 └──────────┘
 ```
 
@@ -220,12 +220,12 @@
 | サムネイル | 約260×160。左上に`MARGIN / TECH NOTE`（固定・小さな等幅）、中央に先頭カテゴリ名（大きな太字）、背景に装飾の図形。配色は先頭カテゴリから自動導出するテーマで切り替え（`blue`は淡い青地に青文字、`dark`は紺地に白文字、他は`green`/`purple`/`black`/`yellow`） |
 | メタ行 | `YYYY.MM.DD` ＋ 「新着」バッジ（新着のみ） |
 | タイトル | 太字。カード全体がリンク（`/blogs/[id]`）。キーボードフォーカス可能 |
-| 要約 | グレー、1〜2行で省略 |
 | カテゴリタグ | 薄いグレー背景の小さなラベルを横並び。複数可 |
 | ホバー | タイトルの色変化またはカードの軽い浮き上がり（過度な演出は避ける） |
 
 - NEWバッジの条件は[05_domain_design.md](./05_domain_design.md)の`isNew`を参照
-- `eyecatch`画像がある場合の扱い: MVPでは**サムネイルは常に装飾表現**とし、画像は詳細ページ側で使う余地として残す（要判断）
+- サムネイルは`eyecatch`画像があればそれを表示し、未設定の場合のみ装飾表現（`ArticleThumbnail`）で代替する
+- 要約（`excerpt`）はカードに表示しない。タイトルで内容が十分伝わるため。要約はmeta description・OGPの説明文にのみ使う（[10.1](#101-ページごとのメタデータ)参照）
 
 ### 5.4 サイドバー
 
@@ -237,7 +237,7 @@
 | ARCHIVE | `YYYY年MM月`と件数。クリックでその月に絞り込む（[01_requirements.md](./01_requirements.md)） |
 | メッセージ枠 | 一言コピー（静的） |
 
-- 記事詳細ページでは、カテゴリーの下に**ARTICLES（最新の記事）**を出す（後述）
+- サイドバーの構成は全ページ共通。記事詳細ページにも「最新の記事」は出さない（旧案にあった記事詳細専用のARTICLESブロックは廃止した）
 
 ### 5.5 URLパラメータ
 
@@ -263,11 +263,9 @@
 │ 𝕏  ┌──────────────────────────┐ │ [🔍 記事を検索]    │
 │ f  │ 大きなサムネイル（16:9）  │ │ プロフィール …     │
 │ B! └──────────────────────────┘ │ カテゴリー …       │
-│ ↑  2026.09.14 ─ SAMPLE ARTICLE   │ ARTICLES 最新の記事 │
-│ │  TypeScriptの型を、もう一歩…   │  ・…               │
+│ ↑  TypeScriptの型を、もう一歩…   │ アーカイブ …       │
 │ │  [TypeScript]                  │                    │
-│ │  ユニオン型と型ガードで…(要約) │                    │
-│ │  ────────────────────────      │                    │
+│ │  2026.09.14                    │                    │
 │ │  本文…                         │                    │
 │ └ シェアボタン（左端に縦並び。スクロールに追従）       │
 └──────────────────────────────────┴────────────────────┘
@@ -276,17 +274,17 @@
 | 要素 | 仕様 |
 |---|---|
 | パンくず | 全幅の帯。`HOME`（青・リンク→`/`）＞ 記事タイトル（グレー・現在地）。トップページの絞り込み時・プロフィールと共通の部品（[3.3](#33-ヘッダー直下のパンくず)参照） |
-| ヒーローサムネイル | 記事カードと同じ装飾サムネイルを大きく表示（角丸、約876×490） |
-| メタ行 | `YYYY.MM.DD` ─ ラベル。ラベルはモックでは`SAMPLE ARTICLE`。本番では`ARTICLE`固定、またはカテゴリ名を出す（要判断） |
+| アイキャッチ | `eyecatch`画像を本文幅いっぱいに表示（角丸・影）。未設定なら表示しない |
 | タイトル | h1。太字・大きめ |
-| カテゴリタグ | カードと同じ表現 |
-| 要約 | グレーの大きめ本文 |
-| 罫線 | 要約と本文の区切り |
+| カテゴリタグ | 各カテゴリはトップページのカテゴリ絞り込み（`/?category=…`）へのリンク |
+| 投稿日 | タイトル・カテゴリの下に小さなグレー文字で表示 |
 | 本文 | microCMSのリッチエディタHTML。見出し・段落・リスト・コード・画像・引用にスタイルを当てる（`prose`相当のスタイルを用意）。HTMLは信頼できる自前CMS由来だが、描画前にサニタイズする（[07_api_design.md](./07_api_design.md)参照） |
-| サイドバー | 検索・著者・カテゴリーに加え、**ARTICLES（最新の記事）**を数件表示。表示中の記事自身は除く |
+| サイドバー | 他ページと共通（検索・著者・カテゴリー・アーカイブ・メッセージ枠） |
 | シェアボタン | X・Facebook・はてなブックマークの3つ。配置・挙動は[6.1](#61-シェアボタンsharebuttons)参照 |
 
-- 前後の記事へのリンク、関連記事は**MVP対象外**（シェアボタンは当初MVP対象外としていたが、Qiitaの記事詳細を参考に対象へ変更した）
+- 前後の記事へのリンク、関連記事、サイドバーの最新記事は**対象外**（シェアボタンは当初MVP対象外としていたが、Qiitaの記事詳細を参考に対象へ変更した）
+- 要約と、要約・本文の間の罫線は表示しない（旧案から削除。タイトルで内容が伝わるため）
+- 記事が存在しない場合は`notFound()`を呼び、[8.6](#86-404ページnot-found)の404ページを出す
 
 ### 6.1 シェアボタン（ShareButtons）
 
@@ -383,6 +381,33 @@
 - 掲載内容の例: プライバシーポリシーはアクセス解析ツールの利用有無・問い合わせで得た情報の扱い、免責事項は掲載情報の正確性・リンク先の責任・著作権の扱い（文面は運営者が決める）
 - SEO: `generateMetadata`で`title`をページ名にする。フッター経由で必ず到達できるため、ページ自体が未実装の状態でフッターを公開するとリンク切れ（404）になる点に注意する
 
+## 8.6 404ページ（not-found）
+
+存在しないURL、または存在しない記事IDにアクセスしたときに表示するページ。
+
+```
+┌ ヘッダー ─────────────────────────────────────────┐
+│                                                    │
+│        ページが見つかりませんでした（h1）          │
+│  お探しのページは削除されたか、URLが間違っている   │
+│  可能性があります。                                │
+│              [ HOMEへ戻る ]                        │
+│                                                    │
+└ フッター ─────────────────────────────────────────┘
+```
+
+| 項目 | 仕様 |
+|---|---|
+| ファイル | `app/not-found.tsx`（ルートに1つだけ置く）。どのルートにも一致しないURLと、記事詳細で`notFound()`を呼んだ場合の両方でこのページが使われる |
+| レイアウト | ルートの`layout.tsx`の中で描画されるため、ヘッダー・フッターは自動で付く。パンくずとサイドバーは出さない（サイドバーはmicroCMSへの取得が必要で、エラー時の表示がCMSの状態に左右されないようにするため） |
+| 見出し | `PageTitle`で`ページが見つかりませんでした` |
+| 本文 | `お探しのページは削除されたか、URLが間違っている可能性があります。` |
+| 導線 | `HOMEへ戻る`ボタン（`/`への内部リンク。daisyUIの`btn`） |
+| メタデータ | `title`は`ページが見つかりませんでした`。Next.jsが404ページに`noindex`を付けるため、検索エンジンには登録されない |
+
+- 記事詳細では、`generateMetadata`とページ本体の両方で記事が無ければ`notFound()`を呼ぶ。本文の送信（ストリーミング）が始まる前に呼ばれればHTTPステータスは404になり、始まった後でもNext.jsが`noindex`を付ける
+- 記事が「存在しない」場合だけ404にし、microCMSの障害（ネットワークエラー、認証エラー等）は404にしない。障害を404として扱うと、一時的な障害で検索エンジンから記事が消えるため。404の判定は`external/microcms/blogs.ts`の`getBlogDetail`で行う（[07_api_design.md](./07_api_design.md)の3章参照）
+
 ## 9. レスポンシブ
 
 | 幅 | レイアウト |
@@ -401,9 +426,31 @@
 - カードのリンクはタイトルにアンカーを置き、カード全体をクリック可能にしても読み上げが重複しないようにする
 - 装飾サムネイルは`aria-hidden`（情報はタイトル側にあるため）
 - 色だけに頼らない（選択中フィルタは背景色＋`aria-pressed`）
-- ページごとに`generateMetadata`で`title` / `description`（要約を利用）/ OGP を設定する
+- ページごとに`title` / `description`を設定する（[10.1](#101-ページごとのメタデータ)参照）
 - シェアボタンはアイコンのみで文字がないため、各リンクに`aria-label`（ツールチップと同じ文言。新規タブで開く旨も伝えるなら`（新しいタブで開く）`を付ける）を付ける。アイコンのSVGは`aria-hidden`にする。ボタン群は`<nav aria-label="記事をシェア">`＋`<ul>`／`<li>`で組む
 - 見出しは各ページでh1を1つにする（トップは絞り込み時のみ`「◯◯」の記事一覧`／`◯年◯月の記事一覧`。絞り込みなし時はh1なし。詳細は記事タイトル。[5.1](#51-パンくずと見出しの切り替え)参照）
+
+### 10.1 ページごとのメタデータ
+
+ルートの`layout.tsx`でサイト名を含む既定値とタイトルのテンプレートを持ち、各ページは自分のページ名だけを返す。ブラウザのタブには`ページ名 | KAIZEN 技術ブログ`と表示される。
+
+| ページ | title | description | 設定方法・備考 |
+|---|---|---|---|
+| ルート（既定値） | `KAIZEN 技術ブログ`（`title.default`）。子ページは`title.template: "%s \| KAIZEN 技術ブログ"` | キャッチコピー（`つくって、試して、わかったこと。Web開発の学びをここに。`） | `layout.tsx`の`metadata`。`metadataBase`・`openGraph`（`siteName`・`locale: "ja_JP"`・`type: "website"`）もここで持つ |
+| トップ（絞り込みなし） | 既定値のまま | 既定値のまま | `canonical`は`/` |
+| トップ（カテゴリ絞り込み） | `「React」の記事一覧` | `「React」に関する記事の一覧です。` | `generateMetadata`で`searchParams`から組み立てる。見出し（h1）と同じ文言にする |
+| トップ（月絞り込み） | `2026年9月の記事一覧` | `2026年9月に公開した記事の一覧です。` | 同上 |
+| トップ（キーワード検索） | `「◯◯」の検索結果` | 既定値のまま | `robots: { index: false }`。検索結果のページは任意の文字列で無数に作れるため、検索エンジンに登録しない |
+| このブログについて | `このブログについて` | 固定文（ブログの紹介） | `page.tsx`の`metadata`（静的） |
+| プロフィール | `プロフィール` | 著者の`bio` | `generateMetadata`で`getProfile`を呼ぶ |
+| プライバシーポリシー | `プライバシーポリシー` | 固定文 | `metadata`（静的） |
+| 免責事項 | `免責事項` | 固定文 | `metadata`（静的） |
+| 記事詳細 | 記事タイトル | `excerpt`（未入力なら既定値） | `features/blog-detail/lib/article-metadata.ts`。OGPは[6.1](#61-シェアボタンsharebuttons)参照 |
+| 404 | `ページが見つかりませんでした` | なし | `not-found.tsx`の`metadata`（静的） |
+
+- サイト名（`KAIZEN 技術ブログ`）とキャッチコピーは`shared/lib/constants.ts`に定数（`SITE_NAME`・`SITE_DESCRIPTION`）として持ち、`layout.tsx`・`manifest.ts`・ヘッダーで共用する
+- トップページのtitle・descriptionの組み立ては、絞り込み条件による分岐があるため`features/blog-list/lib/`の関数に置き、`page.tsx`には持たせない。見出し（h1）の文言を作る処理と共通化する
+- ページネーションの2ページ目以降は、titleを変えずに既定値（または絞り込みのtitle）のままとする
 
 ## 11. コンポーネント対応表
 
@@ -413,10 +460,49 @@
 |---|---|---|
 | Header（キャッチコピー行を含む） / Footer / ScrollTopButton / Breadcrumb | `shared/components/layout/` | Header・Footer・Breadcrumbは Server、ScrollTopは Client。Footerはリンク行とコピーライトのみで状態を持たない（[3.4](#34-フッター)参照）。キャッチコピーはHeaderの一部として全ページ共通で表示する（旧Hero／CatchCopyを統合）。Breadcrumbはトップページの絞り込み時・記事詳細・プロフィールで共用するため`shared`に置く |
 | PageTitle | `shared/components/` | Server。固定ページ（about・プロフィール・プライバシーポリシー・免責事項）のh1。タイトルの下に罫線を引き、本文との間に十分な余白を取る（参考: [nochitoku-it.com/policy](https://www.nochitoku-it.com/policy)）。見た目を4ページで揃えるために共通化する |
-| RichText | `shared/components/` | Server。microCMSのリッチエディタHTMLを描画する。`prose`（Tailwind Typography）のスタイル指定をここに集約し、記事詳細・about・プロフィール・規約系ページの本文で共用する。サニタイズを入れる場合もこの部品で行う |
+| RichText | `shared/components/` | Server。microCMSのリッチエディタHTMLを描画する。`prose`（Tailwind Typography）のスタイル指定をここに集約し、記事詳細・about・プロフィール・規約系ページの本文で共用する。描画前に`shared/lib/sanitize-html.ts`でサニタイズする |
+| NotFound | `app/not-found.tsx` | Server。404ページ（[8.6](#86-404ページnot-found)参照）。`PageTitle`を使う |
 | ArticleCard / ArticleThumbnail / ArticleGrid | `features/blog-list/components/` | Card・Thumbnailは Server、Gridは Client（絞り込み・ページネーションの結果を並べる） |
 | SearchBox / Pagination / PageSizeSelect | `features/blog-list/components/` | Client |
 | ArticleDetail | `features/blog-detail/components/` | Server。記事詳細のメイン領域。左のシェア列（PC）／末尾のシェアボタン（スマホ）と`ArticleBody`をグリッドで配置し、記事の絶対URLを組み立てて`ShareButtons`に渡す |
 | ArticleBody | `features/blog-detail/components/` | Server。アイキャッチ・タイトル・カテゴリ・投稿日・本文（`RichText`）を描画する`<article>` |
 | ShareButtons | `features/blog-detail/components/` | Server。リンクとCSSのツールチップだけで完結するためClient化しない。シェアURLの組み立ては`features/blog-detail/lib/share-links.ts`の純粋関数に分ける（[6.1](#61-シェアボタンsharebuttons)参照） |
-| AuthorCard / TopicsList / ArchiveList / LatestArticles | `features/sidebar/components/` | Server |
+| Sidebar / AuthorCard / CategoryList / ArchiveList / MessageBox | `features/sidebar/components/` | Server（SearchBoxのみClient） |
+
+## 12. PWA
+
+ホーム画面への追加（インストール）に対応する。Next.js公式のPWAガイド（`node_modules/next/dist/docs/01-app/02-guides/progressive-web-apps.md`）に沿い、ライブラリは追加せずにNext.jsの標準機能だけで実現する。
+
+### 12.1 対応範囲
+
+| 機能 | 対応 | 理由 |
+|---|---|---|
+| ホーム画面への追加（インストール） | **対応** | マニフェストを置くだけで実現でき、公式ガイドでも「オフライン対応なしでインストールできる」とされている |
+| アプリ風の表示（アドレスバーなし） | **対応** | マニフェストの`display: "standalone"` |
+| オフライン表示 | 対象外（将来検討） | Service Workerによるキャッシュが必要。CMSの記事が古いまま表示される問題もあり、ブログでは効果が小さい。必要になったら公式ガイドが紹介している`Serwist`を検討する |
+| プッシュ通知 | 対象外 | 購読情報を保存するDBとVAPIDキーの管理が必要で、DBを持たない本プロジェクトの方針（[01_requirements.md](./01_requirements.md)）に合わない |
+
+### 12.2 マニフェスト（`app/manifest.ts`）
+
+| 項目 | 値 |
+|---|---|
+| `name` | `KAIZEN 技術ブログ`（`SITE_NAME`） |
+| `short_name` | `KAIZEN`（ホーム画面のアイコン下に出る短い名前） |
+| `description` | キャッチコピー（`SITE_DESCRIPTION`） |
+| `start_url` | `/` |
+| `display` | `standalone` |
+| `background_color` | `#ffffff`（起動時のスプラッシュ画面の背景） |
+| `theme_color` | ヘッダー上端の紺色（`#1e293b`。Tailwindの`slate-800`） |
+| `lang` | `ja` |
+| `icons` | 192×192と512×512のPNG。512×512は`purpose: "maskable"`用にもう1枚（余白を広めに取ったもの）を用意する |
+
+- アイコンのPNGは既存の`app/icon.svg`（ファビコン）から書き出し、`public/icons/`に置く（`icon-192.png`・`icon-512.png`・`icon-maskable-512.png`）
+- `maskable`は、Androidでアイコンが円や角丸に切り抜かれても絵柄が欠けないようにするための指定。中央の約80%に絵柄を収める
+- iOSのホーム画面用アイコンは既存の`app/apple-icon.png`（180×180）がそのまま使われる
+- アドレスバー等の色は、`layout.tsx`で`viewport`の`themeColor`に`theme_color`と同じ値を設定する（Next.js 16では`themeColor`は`metadata`ではなく`viewport`に書く）
+
+### 12.3 確認方法
+
+- ローカルでは`next dev --experimental-https`でHTTPSにすると、インストールの動作を確認できる（PWAはHTTPSが必須。`localhost`は例外的にHTTPでも可）
+- ChromeのDevToolsの「Application」タブ → 「Manifest」で、マニフェストの読み込みとアイコンの表示、インストール可否のエラーを確認する
+- 本番（Vercel）ではHTTPSのため、スマホで「ホーム画面に追加」できることを確認する
