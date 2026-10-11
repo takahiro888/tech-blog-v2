@@ -312,7 +312,7 @@
 
 | サービス | ツールチップ文言 | 共有画面のURL（`url`・`text`等はURLエンコードする） |
 |---|---|---|
-| X | `X（Twitter）でシェアする` | `https://x.com/intent/post?url={記事URL}&text={記事タイトル}` |
+| X | `X（Twitter）でシェアする` | `https://x.com/intent/post?text={記事タイトル}%0A{記事URL}`（`url`パラメータは使わず、タイトル・改行・記事URLを`text`にまとめる。`url`で渡すとX側がタイトルとの間に半角スペースを入れ、改行できないため。カードは本文中のURLのOGPから作られる） |
 | Facebook | `Facebookでシェアする` | `https://www.facebook.com/sharer/sharer.php?u={記事URL}`（タイトルは渡せず、OGPから取得される） |
 | はてなブックマーク | `はてなブックマークに追加する` | `https://b.hatena.ne.jp/add?mode=confirm&url={記事URL}&title={記事タイトル}` |
 
@@ -323,7 +323,7 @@
 
 - `<a href={共有画面のURL} target="_blank" rel="noopener noreferrer">`の通常リンクで開く。ポップアップウィンドウ（`window.open`でサイズ指定）にはしない。クリック時の処理が不要なので、コンポーネントはServer Componentのままにできる
 - 各SNSのSDK（埋め込みスクリプト）は読み込まない。表示速度とプライバシー（外部スクリプトによるトラッキング）のため、共有画面へのリンクだけで実現する
-- 記事URLは絶対URLが必要なため、サイトのオリジンを環境変数`SITE_URL`から取り、`new URL(`/blogs/${id}`, SITE_URL)`で組み立てる（[07_api_design.md](./07_api_design.md)参照）
+- 記事URLは絶対URLが必要なため、`shared/lib/site-url.ts`の`buildAbsoluteUrl(`/blogs/${id}`)`で組み立てる。内部では`getSiteUrl()`が環境変数`SITE_URL`を読み、未設定ならエラーにする（[07_api_design.md](./07_api_design.md)参照）
 - シェアURLの組み立ては純粋関数（記事URLとタイトルを受け取り、3サービス分の`{ service, label, href }`を返す）に切り出し、コンポーネントはその結果を`map`で描画するだけにする。エンコード漏れを防ぐため、文字列連結ではなく`URLSearchParams`で組み立てる
 
 **OGP（シェア時のカード表示）**
@@ -416,6 +416,7 @@
 | RichText | `shared/components/` | Server。microCMSのリッチエディタHTMLを描画する。`prose`（Tailwind Typography）のスタイル指定をここに集約し、記事詳細・about・プロフィール・規約系ページの本文で共用する。サニタイズを入れる場合もこの部品で行う |
 | ArticleCard / ArticleThumbnail / ArticleGrid | `features/blog-list/components/` | Card・Thumbnailは Server、Gridは Client（絞り込み・ページネーションの結果を並べる） |
 | SearchBox / Pagination / PageSizeSelect | `features/blog-list/components/` | Client |
-| ArticleBody | `features/blog-detail/components/` | Server |
+| ArticleDetail | `features/blog-detail/components/` | Server。記事詳細のメイン領域。左のシェア列（PC）／末尾のシェアボタン（スマホ）と`ArticleBody`をグリッドで配置し、記事の絶対URLを組み立てて`ShareButtons`に渡す |
+| ArticleBody | `features/blog-detail/components/` | Server。アイキャッチ・タイトル・カテゴリ・投稿日・本文（`RichText`）を描画する`<article>` |
 | ShareButtons | `features/blog-detail/components/` | Server。リンクとCSSのツールチップだけで完結するためClient化しない。シェアURLの組み立ては`features/blog-detail/lib/share-links.ts`の純粋関数に分ける（[6.1](#61-シェアボタンsharebuttons)参照） |
 | AuthorCard / TopicsList / ArchiveList / LatestArticles | `features/sidebar/components/` | Server |

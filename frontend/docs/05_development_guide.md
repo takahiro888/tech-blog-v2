@@ -17,10 +17,10 @@
 1. ✅ アプリ本体のファイル・ディレクトリを`frontend/`配下へ移動（`git mv`。トラッキング対象外の`node_modules` / `.env` / `next-env.d.ts`は`mv`で移動、`.next`・`tsconfig.tsbuildinfo`はビルドキャッシュのため削除して再生成に委ねた）
 2. ✅ `.github/workflows/ci.yml`を更新し、`frontend/`ディレクトリ内でコマンドを実行するように変更（`working-directory: frontend`を各ステップに追加、`cache-dependency-path: frontend/package-lock.json`も指定）
 3. ✅ `frontend/.gitignore`を新規作成 — ルートの`.gitignore`は`/node_modules`・`/.next/`等が**ルート起点のパターン**のため、`frontend/`配下には効かない。同等のルールを`frontend/.gitignore`に追加した
-4. ⬜ デプロイ先（Vercel等）のRoot Directory設定を`frontend`に変更する（ダッシュボード側の操作のため未実施、各自対応）
+4. ✅ デプロイ先（Vercel）のRoot Directory設定を`frontend`に変更する（`https://tech-blog-v2-lemon.vercel.app`で公開済み）
 5. ⬜ `frontend/`ディレクトリ内で`npm run dev` / `npm run build` / `npm run test:run`が問題なく動くことを確認する（未実施、各自確認）
 
-### フェーズ1: ディレクトリ構造の再編（`frontend/`内部の整理）
+### フェーズ1: ディレクトリ構造の再編（`frontend/`内部の整理）✅ 完了
 
 1. **`external/microcms/` の作成**
    - `lib/microcms.ts` を `external/microcms/client.ts` + `external/microcms/blogs.ts` に分割
@@ -34,7 +34,7 @@
    - `components/ArticleCard.tsx` / `ArticleGrid.tsx` を `features/blog-list/components/` へ移動
    - `ArticleGrid` からデータ取得ロジック（`useEffect`+`fetch`）を除去し、propsでデータを受け取る形に変更
 
-### フェーズ2: 中身の実装（構造が固まった後）
+### フェーズ2: 中身の実装（構造が固まった後）✅ 完了
 
 4. **microCMSスキーマ拡張と06_content_model.mdの反映**
    - `excerpt` / `categories`（複数選択）をmicroCMS側に追加（カード装飾はカテゴリから自動導出するためフィールド不要）し、`external/microcms/types.ts`に反映
@@ -55,9 +55,9 @@
    - 仕様は`docs/global_design/04_ui_design.md`の「3.4 フッター」「8.5 プライバシーポリシー・免責事項」を参照
 10. **記事詳細のシェアボタン**
     - `.env`とVercelに`SITE_URL`を追加する（`docs/global_design/07_api_design.md`の「認証・環境変数」参照）
-    - `features/blog-detail/lib/share-links.ts`にシェアURLを組み立てる純粋関数を作り、先にテストを書く
-    - `features/blog-detail/components/ShareButtons.tsx`（Server Component）とロゴのSVGを作り、`app/blogs/[id]/page.tsx`で本文の左（PC）／末尾（スマホ）に配置する
-    - 同じタイミングで記事詳細の`generateMetadata`にOGP（`openGraph`・`twitter`）を、ルートの`metadata`に`metadataBase`を設定する
+    - `features/blog-detail/lib/share-links.ts`にシェアURLを組み立てる純粋関数を作り、エンコードのテストを書く
+    - `features/blog-detail/components/ShareButtons.tsx`（Server Component）とロゴのSVGを作り、`ArticleDetail.tsx`で本文の左（PC）／末尾（スマホ）に配置する
+    - 記事詳細の`generateMetadata`にOGP（`openGraph`・`twitter`）を、ルートの`metadata`に`metadataBase`を設定する。メタデータの組み立ては`features/blog-detail/lib/article-metadata.ts`、記事の取得は`get-article.ts`に置き、`app/blogs/[id]/page.tsx`は組み立てだけにする
     - 仕様は`docs/global_design/04_ui_design.md`の「6.1 シェアボタン」を参照
 
 各ステップごとにコミットを分けると、後から見直しやすくなる。

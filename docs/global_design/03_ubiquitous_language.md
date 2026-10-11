@@ -67,7 +67,7 @@
 | **Profile（プロフィール）** | 著者の自己紹介ページ（`/profile`）。本アプリ内の内部ページで、内容はmicroCMSの`profile`で管理する |
 | **SnsLink（SNSリンク）** | 著者のSNS（GitHub / X など）への外部リンク。著者カードにアイコンで表示する |
 | **ShareButtons（シェアボタン）** | 記事詳細で、表示中の記事をX・Facebook・はてなブックマークへ共有するボタン群。著者のSNSへ飛ぶ「SnsLink」とは別物なので混同しない |
-| **ShareUrl（シェアURL）** | 各サービスの共有画面を開くURL（例: `https://x.com/intent/post?url=…&text=…`）。記事の絶対URLとタイトルから組み立てる |
+| **ShareUrl（シェアURL）** | 各サービスの共有画面を開くURL（例: `https://x.com/intent/post?text=…`）。記事の絶対URLとタイトルから組み立てる |
 
 ## 🧱 データ・技術関連
 

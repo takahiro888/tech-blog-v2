@@ -78,44 +78,55 @@ frontend/                        … アプリ本体一式をここに移動
       blog-list/
         components/
           ArticleCard.tsx
+          ArticleThumbnail.tsx     … 記事カードのサムネイル（アイキャッチ、未設定時はカテゴリ由来の装飾）
           ArticleGrid.tsx
-          Pagination.tsx          … ページ番号・前へ／次へ
-          PageSizeSelect.tsx      … 表示件数セレクト
+          ResultSummary.tsx        … 「◯件中 ◯〜◯件を表示」
+          Pagination.tsx           … ページ番号・前へ／次へ
+          PageSizeSelect.tsx       … 表示件数セレクト
         lib/
-          paginate.ts             … paginate / getTotalPages / getPageRange などの純粋関数
-        index.ts                 … このfeatureの公開インターフェース
+          filter-articles.ts       … searchParamsのパース、絞り込み、ページ分割、一覧URLの組み立てなどの純粋関数
       blog-detail/
         components/
-          ArticleBody.tsx
-          ShareButtons.tsx        … X・Facebook・はてなブックマークのシェアボタン（Server Component。ツールチップはdaisyUIのCSSのみ）
-          icons/                  … 各サービスのロゴのインラインSVGコンポーネント（XIcon / FacebookIcon / HatenaBookmarkIcon）
+          ArticleDetail.tsx        … シェア列とArticleBodyの配置（PCは左にシェア列、スマホは本文の末尾）。記事の絶対URLを組み立ててShareButtonsに渡す
+          ArticleBody.tsx          … アイキャッチ・タイトル・カテゴリ・投稿日・本文の<article>
+          ShareButtons.tsx         … X・Facebook・はてなブックマークのシェアボタン（Server Component。ツールチップはdaisyUIのCSSのみ）
+          icons/                   … 各サービスのロゴのインラインSVGコンポーネント（XIcon / FacebookIcon / HatenaBookmarkIcon）
         lib/
-          share-links.ts          … 記事URLとタイトルから各サービスの共有画面URLを組み立てる純粋関数（テストは`frontend/tests/features/blog-detail/lib/share-links.test.ts`）
-      profile/
-        components/
-          ProfileBody.tsx        … 本文（ArticleBodyのスタイルを共用してもよい）
+          get-article.ts           … 記事1件の取得。React.cacheでgenerateMetadataとページ本体の取得を共有し、取得失敗時はnullを返す
+          article-metadata.ts      … 記事のMetadata（title・description・canonical・openGraph・twitter）を組み立てる
+          share-links.ts           … 記事URLとタイトルから各サービスの共有画面URLを組み立てる純粋関数（テストは`frontend/tests/features/blog-detail/lib/share-links.test.ts`）
       sidebar/
         components/
-          AuthorCard.tsx
-          TopicsList.tsx
-          ArchiveList.tsx
+          Sidebar.tsx              … サイドバー全体の組み立て
           SearchBox.tsx
+          AuthorCard.tsx
+          CategoryList.tsx         … カテゴリー一覧（旧称TopicsList）
+          ArchiveList.tsx
+          MessageBox.tsx           … 一言メッセージ枠
+        lib/
+          aggregate.ts             … カテゴリ・アーカイブの集計
     external/
       microcms/
         client.ts                … createClientのみ
         blogs.ts                 … getBlogList / getBlogDetail
         profile.ts               … getProfile（オブジェクト形式のprofile）
         about.ts                 … getAbout（オブジェクト形式のabout）
+        privacy-policy.ts        … プライバシーポリシー本文の取得
+        disclaimer.ts            … 免責事項本文の取得
         types.ts                 … microCMSのレスポンス型
     shared/                      … 特定機能に依存しない共通コード
       lib/
         types.ts                 … アプリ内で使うドメイン寄りの型（Article等）
         constants.ts
+        site-url.ts              … getSiteUrl（環境変数SITE_URLの読み取り）/ buildAbsoluteUrl（絶対URLの組み立て）。layoutのmetadataBaseと記事詳細で共用
+        published-at.ts          … 投稿日の表示形式・年月ラベル
+        sort-article.ts          … 記事の並び替え
+        card-theme.ts            … カテゴリからカード装飾を導出
       components/
         RichText.tsx             … microCMSのリッチエディタHTMLを描画する共通部品（`prose`のスタイル指定を1か所に集約）。
                                    記事詳細・about・profile・privacy-policy・disclaimerの本文で共用する。Server Component
         PageTitle.tsx            … 固定ページのh1（タイトル＋下罫線＋本文との余白）。about・profile・privacy-policy・disclaimerで共用する。Server Component
-        layout/                  … ページの枠組みになる部品（Header / Footer / Breadcrumb 等）。Server Component中心。
+        layout/                  … ページの枠組みになる部品（Header / Footer / Breadcrumb / SidebarLayout / NavLink）。Server Component中心。
                                    Headerはロゴ・ナビに加えキャッチコピー行（全ページ共通で常時表示）も持つ（旧`features/home/CatchCopy`を統合）
                                    Breadcrumbはトップページの絞り込み時・記事詳細・プロフィールで共用する（「HOME > 現在地」表示）
                                    Client化が必要な最小単位（NavLink等）もここにフラットに置く
