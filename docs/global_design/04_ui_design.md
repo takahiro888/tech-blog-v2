@@ -403,7 +403,7 @@
 | 見出し | `PageTitle`で`ページが見つかりませんでした` |
 | 本文 | `お探しのページは削除されたか、URLが間違っている可能性があります。` |
 | 導線 | `HOMEへ戻る`ボタン（`/`への内部リンク。daisyUIの`btn`） |
-| メタデータ | `title`は`ページが見つかりませんでした`。Next.jsが404ページに`noindex`を付けるため、検索エンジンには登録されない |
+| メタデータ | 設定しない（タブはルートの既定値`KAIZEN 技術ブログ`になる）。Next.js 16のドキュメントで`metadata`のexportが案内されているのは`global-not-found.js`だけで、通常の`not-found.tsx`では対象外のため。Next.jsが404ページに`noindex`を付けるので、検索エンジンには登録されない |
 
 - 記事詳細では、`generateMetadata`とページ本体の両方で記事が無ければ`notFound()`を呼ぶ。本文の送信（ストリーミング）が始まる前に呼ばれればHTTPステータスは404になり、始まった後でもNext.jsが`noindex`を付ける
 - 記事が「存在しない」場合だけ404にし、microCMSの障害（ネットワークエラー、認証エラー等）は404にしない。障害を404として扱うと、一時的な障害で検索エンジンから記事が消えるため。404の判定は`external/microcms/blogs.ts`の`getBlogDetail`で行う（[07_api_design.md](./07_api_design.md)の3章参照）
@@ -446,7 +446,7 @@
 | プライバシーポリシー | `プライバシーポリシー` | 固定文 | `metadata`（静的） |
 | 免責事項 | `免責事項` | 固定文 | `metadata`（静的） |
 | 記事詳細 | 記事タイトル | `excerpt`（未入力なら既定値） | `features/blog-detail/lib/article-metadata.ts`。OGPは[6.1](#61-シェアボタンsharebuttons)参照 |
-| 404 | `ページが見つかりませんでした` | なし | `not-found.tsx`の`metadata`（静的） |
+| 404 | 既定値のまま | 既定値のまま | `not-found.tsx`はメタデータのexport対象外のため設定しない（[8.6](#86-404ページnot-found)参照） |
 
 - サイト名（`KAIZEN 技術ブログ`）とキャッチコピーは`shared/lib/constants.ts`に定数（`SITE_NAME`・`SITE_DESCRIPTION`）として持ち、`layout.tsx`・`manifest.ts`・ヘッダーで共用する
 - トップページのtitle・descriptionの組み立ては、絞り込み条件による分岐があるため`features/blog-list/lib/`の関数に置き、`page.tsx`には持たせない。見出し（h1）の文言を作る処理と共通化する
@@ -494,9 +494,9 @@
 | `background_color` | `#ffffff`（起動時のスプラッシュ画面の背景） |
 | `theme_color` | ヘッダー上端の紺色（`#1e293b`。Tailwindの`slate-800`） |
 | `lang` | `ja` |
-| `icons` | 192×192と512×512のPNG。512×512は`purpose: "maskable"`用にもう1枚（余白を広めに取ったもの）を用意する |
+| `icons` | 192×192と512×512のPNG（白背景）。512×512は`purpose: "maskable"`用にもう1枚（淡い青`#EEF2FF`の背景で、絵柄を中央60%に収めたもの）を用意する |
 
-- アイコンのPNGは既存の`app/icon.svg`（ファビコン）から書き出し、`public/icons/`に置く（`icon-192.png`・`icon-512.png`・`icon-maskable-512.png`）
+- アイコンのPNGは既存の`app/icon.svg`（ファビコン）から書き出し、`public/icons/`に置いた（`icon-192.png`・`icon-512.png`・`icon-maskable-512.png`。macOS標準の`qlmanage`で変換）。ファビコンを変えたら作り直す
 - `maskable`は、Androidでアイコンが円や角丸に切り抜かれても絵柄が欠けないようにするための指定。中央の約80%に絵柄を収める
 - iOSのホーム画面用アイコンは既存の`app/apple-icon.png`（180×180）がそのまま使われる
 - アドレスバー等の色は、`layout.tsx`で`viewport`の`themeColor`に`theme_color`と同じ値を設定する（Next.js 16では`themeColor`は`metadata`ではなく`viewport`に書く）

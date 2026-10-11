@@ -69,7 +69,7 @@
     - 仕様は`docs/global_design/04_ui_design.md`の「8.6 404ページ」、`docs/global_design/07_api_design.md`の「3. エラーハンドリング」を参照
 12. **ページごとのメタデータ**
     - `shared/lib/constants.ts`に`SITE_NAME`・`SITE_DESCRIPTION`を追加し、`app/layout.tsx`の`metadata`を`title.default`・`title.template`の形にする
-    - about・プライバシーポリシー・免責事項・404は静的な`metadata`、プロフィールは`generateMetadata`で設定する
+    - about・プライバシーポリシー・免責事項は静的な`metadata`、プロフィールは`generateMetadata`で設定する（404ページはメタデータのexport対象外のため設定しない）
     - トップページは`features/blog-list/lib/list-metadata.ts`で絞り込み条件からtitle・description・robotsを組み立て、`app/page.tsx`の見出しの組み立てもこの関数に寄せる。分岐を含むので`tests/features/blog-list/lib/list-metadata.test.ts`を書く
     - 仕様は`docs/global_design/04_ui_design.md`の「10.1 ページごとのメタデータ」を参照
 13. **リッチテキストのサニタイズ**
@@ -78,7 +78,7 @@
     - 記事詳細・about・プロフィール・規約系ページの表示が崩れていないか確認する
     - 仕様は`docs/global_design/07_api_design.md`の「4.1 リッチテキストのサニタイズ」を参照
 14. **PWA対応**
-    - `app/icon.svg`から192・512・maskable 512のPNGを書き出し、`public/icons/`に置く
+    - ✅ `app/icon.svg`から192・512・maskable 512のPNGを書き出し、`public/icons/`に置く（代行済み）
     - `app/manifest.ts`を作り、`app/layout.tsx`に`viewport`（`themeColor`）を追加する
     - ChromeのDevToolsの「Application」→「Manifest」でエラーが無いこと、本番でホーム画面に追加できることを確認する
     - 仕様は`docs/global_design/04_ui_design.md`の「12. PWA」を参照
