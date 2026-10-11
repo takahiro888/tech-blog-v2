@@ -26,8 +26,7 @@ export function buildShareLinks(
       service: "x",
       label: "X（Twitter）でシェアする",
       href: buildUrlWithParams("https://x.com/intent/post", {
-        url: articleUrl,
-        text: title,
+        text: `${title}\n${articleUrl}`,
       }),
     },
     {
