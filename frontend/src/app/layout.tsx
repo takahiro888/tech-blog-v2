@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getSiteUrl } from "@/shared/lib/site-url";
 import type { ReactNode } from "react";
 import { Header } from "@/shared/components/layout/Header";
 import { Footer } from "@/shared/components/layout/Footer";
@@ -16,8 +17,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "Tech Blog",
   description: "技術ブログ",
+  openGraph: {
+    siteName: "Tech Blog",
+    locale: "ja_JP",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
