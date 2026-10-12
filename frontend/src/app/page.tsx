@@ -19,11 +19,6 @@ import {
   buildFilterLabel,
 } from "@/features/blog-list/lib/list-metadata";
 
-export const metadata: Metadata = {
-  title: "このブログについて",
-  description: "KAIZEN 技術ブログのコンセプトと、扱っているテーマを紹介します。",
-};
-
 type HomeProps = {
   searchParams: Promise<RawArticlesSearchParams>;
 };
@@ -35,11 +30,7 @@ export async function generateMetadata({
   return buildArticleListMetadata(query);
 }
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<RawArticlesSearchParams>;
-}) {
+export default async function Home({ searchParams }: HomeProps) {
   const rawSearchParams = await searchParams;
   const contents = await getBlogList();
 

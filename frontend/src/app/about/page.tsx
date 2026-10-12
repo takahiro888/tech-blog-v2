@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import Image from "next/image";
 import { RichText } from "@/shared/components/RichText";
 import { getAbout } from "@/external/microcms/about";
 import { PageTitle } from "@/shared/components/PageTitle";
+
+export const metadata: Metadata = {
+  title: "このブログについて",
+  description:
+    "KAIZEN 技術ブログのコンセプトと、扱っているテーマを紹介します。",
+};
 
 export default async function AboutPage() {
   const about = await getAbout();
