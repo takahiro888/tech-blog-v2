@@ -119,7 +119,8 @@ frontend/                        … アプリ本体一式をここに移動
           aggregate.ts             … カテゴリ・アーカイブの集計
     external/
       microcms/
-        client.ts                … createClientと、キャッシュ設定を作るbuildCacheOptions。先頭でimport "server-only"
+        client.ts                … createClientのみ。先頭でimport "server-only"
+        endpoints.ts             … エンドポイント名の一覧（MICROCMS_ENDPOINTS）とキャッシュ設定を作るbuildCacheOptions
         webhook.ts               … Webhookの署名検証（verifyWebhookSignature）と、再検証するタグの判定（resolveRevalidateTag）
         blogs.ts                 … getBlogList / getBlogDetail（microCMSが404を返したときだけnullを返す）
         profile.ts               … getProfile（オブジェクト形式のprofile）

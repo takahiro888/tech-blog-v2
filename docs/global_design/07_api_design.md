@@ -149,7 +149,7 @@
 - Cache Components（`cacheComponents: true`）は有効にしない。有効にすると`searchParams`を使うトップページなどでSuspenseの配置の見直しが必要になり、変更範囲が大きいため（[frontend/04_data_fetching_policy.md](../../frontend/docs/04_data_fetching_policy.md)の「キャッシュ戦略」参照）
 - 代わりに、microCMS SDKの`customRequestInit`でfetchに`next: { revalidate: 3600, tags: [エンドポイント名] }`を渡す。SDKは内部で`fetch`を使うため、Next.jsのデータキャッシュがそのまま効く
 - タグはエンドポイント名と同じにする（`blogs`・`profile`・`about`・`privacy-policy`・`disclaimer`）。Webhookのペイロードの`api`にエンドポイント名が入るので、受け取った値をそのまま`revalidateTag`に渡せる
-- 有効期間とタグを付ける処理は`external/microcms/client.ts`に`buildCacheOptions(endpoint)`として1か所にまとめ、各取得関数から使う
+- エンドポイント名の一覧（`MICROCMS_ENDPOINTS`）と、有効期間とタグを付ける`buildCacheOptions(endpoint)`は`external/microcms/endpoints.ts`に1か所でまとめ、各取得関数とWebhookの判定から使う。`client.ts`に置かないのは、`client.ts`が読み込み時に環境変数を読むため、Webhookの判定のテストで`client.ts`ごと読み込まれるのを避けるため
 
 **オンデマンド更新のAPI**
 

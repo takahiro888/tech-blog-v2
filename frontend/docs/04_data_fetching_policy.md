@@ -137,7 +137,7 @@ export function ArticleGrid({ articles }: { articles: Blog[] }) {
 | fetch単位のキャッシュ（Cache Componentsなし） | `fetch(url, { next: { revalidate, tags } })`。Next.js公式の「caching-without-cache-components」ガイドの方式 | **採用**。microCMS SDKの`customRequestInit`で渡せるため、`external/`層の中だけで完結する |
 
 ```ts
-// external/microcms/client.ts（イメージ）
+// external/microcms/endpoints.ts（イメージ）
 export function buildCacheOptions(endpoint: MicroCMSEndpoint) {
   return { next: { revalidate: 3600, tags: [endpoint] } };
 }

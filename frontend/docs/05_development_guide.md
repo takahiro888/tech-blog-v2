@@ -88,7 +88,8 @@
 ### フェーズ4: 仕上げ（見た目・堅牢性・SEO）
 
 16. **スマホでのヘッダー表示**
-    - 方針は`docs/global_design/04_ui_design.md`の「3.2 ヘッダー」に追記予定（2段構成かハンバーガーメニューかを決めてから）
+    - `shared/components/layout/Header.tsx`を、スマホ・タブレットでは2段構成、PCでは1段にする。画面上部への固定はPCのみにする
+    - 仕様は`docs/global_design/04_ui_design.md`の「3.2 ヘッダー」を参照
 17. **エラー画面**
     - `app/error.tsx`（`"use client"`、`retry`で再試行）と、最小限の`app/global-error.tsx`を作る
     - 仕様は`docs/global_design/04_ui_design.md`の「8.7 エラー画面」を参照
@@ -101,7 +102,7 @@
     - `getRequiredEnv`は未設定時の分岐があるので`tests/shared/lib/env.test.ts`を書く（`vi.mock("server-only", () => ({}))`が必要）
     - 仕様は`docs/global_design/07_api_design.md`の「認証・環境変数」「4. セキュリティ」を参照
 20. **キャッシュと再検証**
-    - `external/microcms/client.ts`に`buildCacheOptions`を作り、`external/microcms/`の全取得関数に`customRequestInit`として渡す。既存の`blogs.test.ts`の呼び出し内容の期待値も更新する
+    - `external/microcms/endpoints.ts`に`MICROCMS_ENDPOINTS`と`buildCacheOptions`を作り、`external/microcms/`の全取得関数に`customRequestInit`として渡す。既存の`blogs.test.ts`の呼び出し内容の期待値も更新する
     - `external/microcms/webhook.ts`に署名検証とタグ判定を作り、先にテストを書く。`app/api/revalidate/route.ts`から呼ぶ
     - `.env`とVercelに`MICROCMS_WEBHOOK_SECRET`を追加し、microCMSの各APIにWebhook（カスタム通知）を設定する
     - `npm run build && npm run start`でキャッシュが効くこと、記事を更新するとWebhookで反映されることを確認する
