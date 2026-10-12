@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getBlogList } from "@/external/microcms/blogs";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
@@ -12,7 +13,27 @@ import {
   buildArticlesHref,
   type RawArticlesSearchParams,
 } from "@/features/blog-list/lib/filter-articles";
-import { formatYearMonthLabel } from "@/shared/lib/published-at";
+import {
+  buildArticleListHeading,
+  buildArticleListMetadata,
+  buildFilterLabel,
+} from "@/features/blog-list/lib/list-metadata";
+
+export const metadata: Metadata = {
+  title: "このブログについて",
+  description: "KAIZEN 技術ブログのコンセプトと、扱っているテーマを紹介します。",
+};
+
+type HomeProps = {
+  searchParams: Promise<RawArticlesSearchParams>;
+};
+
+export async function generateMetadata({
+  searchParams,
+}: HomeProps): Promise<Metadata> {
+  const query = parseArticlesSearchParams(await searchParams);
+  return buildArticleListMetadata(query);
+}
 
 export default async function Home({
   searchParams,
@@ -30,18 +51,8 @@ export default async function Home({
     query.pageSize,
   );
 
-  // キーワード・ページ番号・表示件数だけの絞り込みではキャッチコピー帯のまま維持する
-  const filterLabel = query.category
-    ? query.category
-    : query.yearMonth
-      ? formatYearMonthLabel(query.yearMonth)
-      : null;
-
-  const heading = query.category
-    ? `「${query.category}」の記事一覧`
-    : query.yearMonth
-      ? `${formatYearMonthLabel(query.yearMonth)}の記事一覧`
-      : null;
+  const filterLabel = buildFilterLabel(query);
+  const heading = buildArticleListHeading(query);
 
   return (
     <>

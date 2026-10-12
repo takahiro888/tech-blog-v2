@@ -7,6 +7,10 @@ export const CATCH_COPY = {
   subtitle: "つくって、試して、わかったこと。Web開発の学びをここに。",
 } as const;
 
+export const SITE_NAME = "KAIZEN 技術ブログ";
+export const SITE_DESCRIPTION = CATCH_COPY.subtitle;
+export const THEME_COLOR = "#1e293b";
+
 export const SIDEBAR_MESSAGE = "「わからない」は、前に進んでいる証拠。";
 
 export const FOOTER_LINKS = [

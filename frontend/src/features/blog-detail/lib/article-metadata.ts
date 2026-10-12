@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Blog } from "@/external/microcms/types";
+import type { Blog } from "@/external/microcms/types";
+import { SITE_NAME } from "@/shared/lib/constants";
 
-export function buildArticleMetadata(blog: Blog | null): Metadata {
-  if (!blog) {
-    return { title: "記事が見つかりませんでした" };
-  }
-
+export function buildArticleMetadata(blog: Blog): Metadata {
   const articlePath = `/blogs/${blog.id}`;
 
   return {
     title: blog.title,
     description: blog.excerpt,
+    alternates: { canonical: articlePath },
     openGraph: {
+      // openGraphはlayoutの値と浅くマージされ丸ごと置き換わるため、共通の項目もここに書く
+      siteName: SITE_NAME,
+      locale: "ja_JP",
       type: "article",
       title: blog.title,
       description: blog.excerpt,

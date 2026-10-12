@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { getProfile } from "@/external/microcms/profile";
 import { Breadcrumb } from "@/shared/components/layout/Breadcrumb";
 import { SidebarLayout } from "@/shared/components/layout/SidebarLayout";
 import { RichText } from "@/shared/components/RichText";
 import { PageTitle } from "@/shared/components/PageTitle";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const profile = await getProfile();
+  return {
+    title: "プロフィール",
+    description: profile.bio,
+  };
+}
 
 export default async function ProfilePage() {
   const profile = await getProfile();

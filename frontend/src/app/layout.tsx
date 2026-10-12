@@ -1,10 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getSiteUrl } from "@/shared/lib/site-url";
 import type { ReactNode } from "react";
 import { Header } from "@/shared/components/layout/Header";
 import { Footer } from "@/shared/components/layout/Footer";
 import "./globals.css";
+import {
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  THEME_COLOR,
+} from "@/shared/lib/constants";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,12 +23,17 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: "Tech Blog",
-  description: "技術ブログ",
+  title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
   openGraph: {
-    siteName: "Tech Blog",
+    siteName: SITE_NAME,
     locale: "ja_JP",
+    type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: THEME_COLOR,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
