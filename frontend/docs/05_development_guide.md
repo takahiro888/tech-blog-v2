@@ -85,6 +85,32 @@
 15. **記事カードの要約の削除**
     - `features/blog-list/components/ArticleCard.tsx`から`excerpt`の表示を削除する（microCMSの`excerpt`フィールドと型は、記事詳細のdescription用に残す）
 
+### フェーズ4: 仕上げ（見た目・堅牢性・SEO）
+
+16. **スマホでのヘッダー表示**
+    - 方針は`docs/global_design/04_ui_design.md`の「3.2 ヘッダー」に追記予定（2段構成かハンバーガーメニューかを決めてから）
+17. **エラー画面**
+    - `app/error.tsx`（`"use client"`、`retry`で再試行）と、最小限の`app/global-error.tsx`を作る
+    - 仕様は`docs/global_design/04_ui_design.md`の「8.7 エラー画面」を参照
+18. **ページ先頭へ戻るボタン**
+    - `shared/components/layout/ScrollTopButton.tsx`（Client Component）を作り、`app/layout.tsx`に置く
+    - 仕様は`docs/global_design/04_ui_design.md`の「3.5 ページ先頭へ戻るボタン」を参照
+19. **サーバー専用の保護と環境変数の検知**
+    - `npm install server-only`
+    - `shared/lib/env.ts`に`getRequiredEnv`を作り、`external/microcms/client.ts`と`shared/lib/site-url.ts`で使う。`client.ts`・`env.ts`・`site-url.ts`の先頭に`import "server-only"`を書く
+    - `getRequiredEnv`は未設定時の分岐があるので`tests/shared/lib/env.test.ts`を書く（`vi.mock("server-only", () => ({}))`が必要）
+    - 仕様は`docs/global_design/07_api_design.md`の「認証・環境変数」「4. セキュリティ」を参照
+20. **キャッシュと再検証**
+    - `external/microcms/client.ts`に`buildCacheOptions`を作り、`external/microcms/`の全取得関数に`customRequestInit`として渡す。既存の`blogs.test.ts`の呼び出し内容の期待値も更新する
+    - `external/microcms/webhook.ts`に署名検証とタグ判定を作り、先にテストを書く。`app/api/revalidate/route.ts`から呼ぶ
+    - `.env`とVercelに`MICROCMS_WEBHOOK_SECRET`を追加し、microCMSの各APIにWebhook（カスタム通知）を設定する
+    - `npm run build && npm run start`でキャッシュが効くこと、記事を更新するとWebhookで反映されることを確認する
+    - 仕様は`docs/global_design/07_api_design.md`の「5. 再検証」を参照
+21. **サイトマップとrobots.txt**
+    - `features/blog-detail/lib/sitemap-entries.ts`を作り、テストを書く。`app/sitemap.ts`・`app/robots.ts`から使う
+    - 本番で`/sitemap.xml`と`/robots.txt`が開けることを確認し、必要ならGoogle Search Consoleにサイトマップを登録する
+    - 仕様は`docs/global_design/04_ui_design.md`の「10.2 サイトマップとrobots.txt」を参照
+
 各ステップごとにコミットを分けると、後から見直しやすくなる。
 
 ## コミット規約
@@ -112,7 +138,7 @@ Claudeがコミットを作成する際は、**`git commit`を実行する前に
 
 **テスト範囲を絞る方針**を取る。デザイン・見た目に関するテスト（コンポーネントの表示内容やレイアウトの検証等）は基本的に書かない。**ロジック部分にのみテストコードを書く**。
 
-- 対象にする例: `external/microcms/`の関数（microCMS SDKへの呼び出し内容の検証）、シェアURLの組み立て（`features/blog-detail/lib/share-links.ts`。日本語や`&`・`#`を含むタイトルが正しくエンコードされるか等）、`getBlogDetail`の404判定、トップページのメタデータの組み立て、サニタイズの許可リスト、データ変換・集計処理（将来追加するTOPICS/ARCHIVEの集計等）、条件分岐を含むユーティリティ関数（`ArticleGrid`の表示件数・`hasMore`判定のような、propsに応じて挙動が変わる部分等）
+- 対象にする例: `external/microcms/`の関数（microCMS SDKへの呼び出し内容の検証）、シェアURLの組み立て（`features/blog-detail/lib/share-links.ts`。日本語や`&`・`#`を含むタイトルが正しくエンコードされるか等）、`getBlogDetail`の404判定、トップページのメタデータの組み立て、サニタイズの許可リスト、必須の環境変数の検知、Webhookの署名検証とタグ判定、サイトマップの項目の組み立て、データ変換・集計処理（将来追加するTOPICS/ARCHIVEの集計等）、条件分岐を含むユーティリティ関数（`ArticleGrid`の表示件数・`hasMore`判定のような、propsに応じて挙動が変わる部分等）
 - 対象にしない例: コンポーネントの見た目・レイアウトの検証、単純にpropsをそのまま表示するだけのコンポーネントのレンダリングテスト
 - CIを通すための「最初の1件」も、デザイン寄りのテストではなくロジックのテスト（例: `external/microcms/blogs.ts`が正しいエンドポイント・パラメータでSDKを呼んでいるかの検証）にする
 - 既存の`npm run test` / `npm run test:run`（vitest）をそのまま利用する

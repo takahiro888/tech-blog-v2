@@ -121,6 +121,17 @@
 - 右下固定の円形ボタン（上向きシェブロン）。一定量スクロールしたら表示する
 - クリックでページ最上部へスムーズスクロール。`aria-label="ページの先頭へ戻る"`
 
+| 項目 | 仕様 |
+|---|---|
+| 置き場所 | `shared/components/layout/ScrollTopButton.tsx`。スクロール量の監視とクリック処理が必要なためClient Component。`app/layout.tsx`のフッターの後ろに置き、全ページで表示する |
+| 表示条件 | `window.scrollY`が400pxを超えたら表示し、それ以下では描画しない（非表示中にTabキーでフォーカスが当たらないよう、隠すのではなく描画しない） |
+| スクロールの監視 | `scroll`イベントを`{ passive: true }`で登録し、コンポーネントが消えるときに解除する |
+| 位置・見た目 | 画面右下（`fixed bottom-6 right-6`）、直径48px程度の円形。紺地（ヘッダー上端と同じ`slate-800`）に白い上向きシェブロン。影を付ける。ヘッダー（`z-50`）より下の`z-40` |
+| 動き | `window.scrollTo({ top: 0, behavior })`。OSで「視差効果を減らす」を設定している人には`behavior: "auto"`（瞬時に移動）、それ以外は`"smooth"`。`prefers-reduced-motion`で判定する |
+| 要素 | `<button type="button">`。アイコンのSVGは`aria-hidden` |
+
+- 表示・非表示の切り替えはスクロール量だけで決まる単純な処理なので、テストは書かない（テスト方針の「見た目の検証はしない」に該当）
+
 ## 4. カラー・タイポグラフィ（目安）
 
 | 役割 | 値の目安 | 用途 |
@@ -408,6 +419,22 @@
 - 記事詳細では、`generateMetadata`とページ本体の両方で記事が無ければ`notFound()`を呼ぶ。本文の送信（ストリーミング）が始まる前に呼ばれればHTTPステータスは404になり、始まった後でもNext.jsが`noindex`を付ける
 - 記事が「存在しない」場合だけ404にし、microCMSの障害（ネットワークエラー、認証エラー等）は404にしない。障害を404として扱うと、一時的な障害で検索エンジンから記事が消えるため。404の判定は`external/microcms/blogs.ts`の`getBlogDetail`で行う（[07_api_design.md](./07_api_design.md)の3章参照）
 
+## 8.7 エラー画面（error）
+
+microCMSへの接続失敗など、ページの描画中に予期しないエラーが起きたときに表示するページ。存在しない記事は404（[8.6](#86-404ページnot-found)）で扱い、こちらには来ない。
+
+| 項目 | 仕様 |
+|---|---|
+| ファイル | `app/error.tsx`（ルートに1つ）。Next.jsの決まりでClient Component（`"use client"`）にする |
+| 受け取る値 | `error`（`digest`付きのError）と`retry`。Next.js 16では再試行の関数は`retry`（データを取り直して再描画する）。`reset`もあるが、データを取り直さないため使わない |
+| 見出し | `PageTitle`で`エラーが発生しました` |
+| 本文 | `ページの読み込み中に問題が発生しました。時間をおいて、もう一度お試しください。` |
+| 導線 | `もう一度読み込む`ボタン（`retry()`を呼ぶ）と`HOMEへ戻る`リンク |
+| エラー内容 | 画面には出さない（本番ではServer Componentのエラー内容はNext.jsが伏せる）。`useEffect`で`console.error(error)`を出し、ブラウザの開発者ツールで追えるようにする |
+| レイアウト | 404ページと同じく、パンくず・サイドバーなしの中央寄せ。ヘッダー・フッターはルートの`layout.tsx`のものがそのまま付く |
+
+- `app/error.tsx`はルートの`layout.tsx`自体のエラー（`metadataBase`の`SITE_URL`未設定など）は受け止められない。そのため、最小限の`app/global-error.tsx`も置く。こちらは`layout.tsx`の代わりに描画されるので、自分で`<html lang="ja">`と`<body>`を持ち、`globals.css`を読み込む。メタデータのexportは使えないため、Reactの`<title>`要素でタイトルを付ける
+
 ## 9. レスポンシブ
 
 | 幅 | レイアウト |
@@ -453,6 +480,30 @@
 - トップページのtitle・descriptionの組み立ては、絞り込み条件による分岐があるため`features/blog-list/lib/`の関数に置き、`page.tsx`には持たせない。見出し（h1）の文言を作る処理と共通化する
 - ページネーションの2ページ目以降は、titleを変えずに既定値（または絞り込みのtitle）のままとする
 
+### 10.2 サイトマップとrobots.txt
+
+検索エンジンに、サイト内のページと記事のURLを伝える。Next.jsのファイル規約（`app/sitemap.ts`・`app/robots.ts`）で生成し、`/sitemap.xml`・`/robots.txt`として配信される。
+
+**サイトマップ（`app/sitemap.ts`）**
+
+| 対象 | URL | `lastModified` |
+|---|---|---|
+| トップ | `/` | 最新記事の更新日時 |
+| 固定ページ | `/about`・`/profile`・`/privacy-policy`・`/disclaimer` | 持たない（microCMSから取得しないため。取得のための通信を増やさない） |
+| 記事詳細 | 全記事の`/blogs/[id]` | 各記事の`revisedAt`（最後に公開し直した日時）。無ければ`publishedAt` |
+
+- URLは`shared/lib/site-url.ts`の`buildAbsoluteUrl`で絶対URLにする（サイトマップは絶対URLが必要）
+- 記事一覧は`getBlogList()`をそのまま使う。キャッシュ（[07_api_design.md](./07_api_design.md)の5章）が効くので、サイトマップのために余分な通信は起きない
+- カテゴリ・月の絞り込みページ（`/?category=…`）と検索結果は載せない。前者は記事詳細から辿れ、後者は`noindex`のため
+- 記事の配列からサイトマップの配列を作る処理は`features/blog-detail/lib/sitemap-entries.ts`に切り出し、`app/sitemap.ts`は取得と呼び出しだけにする。`revisedAt`が無いときの分岐があるのでテストを書く
+
+**robots.txt（`app/robots.ts`）**
+
+| 項目 | 値 |
+|---|---|
+| `rules` | すべてのクローラー（`userAgent: "*"`）に全体を許可（`allow: "/"`）。`/api/`は`disallow` |
+| `sitemap` | `buildAbsoluteUrl("/sitemap.xml")` |
+
 ## 11. コンポーネント対応表
 
 [frontend/docs/03_directory_structure.md](../../frontend/docs/03_directory_structure.md)の構成と対応させる。
@@ -463,6 +514,7 @@
 | PageTitle | `shared/components/` | Server。固定ページ（about・プロフィール・プライバシーポリシー・免責事項）のh1。タイトルの下に罫線を引き、本文との間に十分な余白を取る（参考: [nochitoku-it.com/policy](https://www.nochitoku-it.com/policy)）。見た目を4ページで揃えるために共通化する |
 | RichText | `shared/components/` | Server。microCMSのリッチエディタHTMLを描画する。`prose`（Tailwind Typography）のスタイル指定をここに集約し、記事詳細・about・プロフィール・規約系ページの本文で共用する。描画前に`shared/lib/sanitize-html.ts`でサニタイズする |
 | NotFound | `app/not-found.tsx` | Server。404ページ（[8.6](#86-404ページnot-found)参照）。`PageTitle`を使う |
+| Error / GlobalError | `app/error.tsx` / `app/global-error.tsx` | Client（Next.jsの決まり）。エラー画面（[8.7](#87-エラー画面error)参照） |
 | ArticleCard / ArticleThumbnail / ArticleGrid | `features/blog-list/components/` | Card・Thumbnailは Server、Gridは Client（絞り込み・ページネーションの結果を並べる） |
 | SearchBox / Pagination / PageSizeSelect | `features/blog-list/components/` | Client |
 | ArticleDetail | `features/blog-detail/components/` | Server。記事詳細のメイン領域。左のシェア列（PC）／末尾のシェアボタン（スマホ）と`ArticleBody`をグリッドで配置し、記事の絶対URLを組み立てて`ShareButtons`に渡す |

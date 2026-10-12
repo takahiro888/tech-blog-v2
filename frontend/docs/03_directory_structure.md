@@ -65,6 +65,12 @@ frontend/                        … アプリ本体一式をここに移動
     app/
       layout.tsx                 … metadata（title.template・metadataBase・openGraph）とviewport（themeColor）もここで持つ
       not-found.tsx              … 404ページ。どのルートにも一致しないURLと、記事詳細のnotFound()の両方で使われる
+      error.tsx                  … エラー画面（Client Component）。microCMSの障害などで描画に失敗したとき
+      global-error.tsx           … ルートのlayout.tsx自体が失敗したときのエラー画面（自前でhtml・bodyを持つ）
+      sitemap.ts                 … /sitemap.xml。固定ページと全記事のURL
+      robots.ts                  … /robots.txt
+      api/
+        revalidate/route.ts      … microCMSのWebhookを受けてrevalidateTagを呼ぶRoute Handler
       manifest.ts                … PWAのマニフェスト（名前・アイコン・テーマ色）
       icon.svg / apple-icon.png  … ファビコン・iOSのホーム画面用アイコン（ファイル規約で自動的に読み込まれる）
       page.tsx                   … トップページ（Server Component、featuresを組み立てるだけ）。記事一覧を兼ねる（フィルタ・検索・ページネーション込み）
@@ -99,6 +105,7 @@ frontend/                        … アプリ本体一式をここに移動
         lib/
           get-article.ts           … 記事1件の取得。React.cacheでgenerateMetadataとページ本体の取得を共有する（存在しない記事のnullはexternal層のgetBlogDetailが返す）
           article-metadata.ts      … 記事のMetadata（title・description・canonical・openGraph・twitter）を組み立てる
+          sitemap-entries.ts       … 記事の配列からサイトマップの項目（url・lastModified）を作る
           share-links.ts           … 記事URLとタイトルから各サービスの共有画面URLを組み立てる純粋関数（テストは`frontend/tests/features/blog-detail/lib/share-links.test.ts`）
       sidebar/
         components/
@@ -112,7 +119,8 @@ frontend/                        … アプリ本体一式をここに移動
           aggregate.ts             … カテゴリ・アーカイブの集計
     external/
       microcms/
-        client.ts                … createClientのみ
+        client.ts                … createClientと、キャッシュ設定を作るbuildCacheOptions。先頭でimport "server-only"
+        webhook.ts               … Webhookの署名検証（verifyWebhookSignature）と、再検証するタグの判定（resolveRevalidateTag）
         blogs.ts                 … getBlogList / getBlogDetail（microCMSが404を返したときだけnullを返す）
         profile.ts               … getProfile（オブジェクト形式のprofile）
         about.ts                 … getAbout（オブジェクト形式のabout）
@@ -123,6 +131,7 @@ frontend/                        … アプリ本体一式をここに移動
       lib/
         types.ts                 … アプリ内で使うドメイン寄りの型（Article等）
         constants.ts             … SITE_NAME・SITE_DESCRIPTION・CATCH_COPY・FOOTER_LINKS など
+        env.ts                   … getRequiredEnv（必須の環境変数を読み、未設定なら変数名入りのエラー）。server-only
         sanitize-html.ts         … sanitizeRichText（リッチエディタHTMLの許可タグ・属性を絞る）。RichTextから呼ぶ
         site-url.ts              … getSiteUrl（環境変数SITE_URLの読み取り）/ buildAbsoluteUrl（絶対URLの組み立て）。layoutのmetadataBaseと記事詳細で共用
         published-at.ts          … 投稿日の表示形式・年月ラベル
@@ -132,7 +141,7 @@ frontend/                        … アプリ本体一式をここに移動
         RichText.tsx             … microCMSのリッチエディタHTMLを描画する共通部品（`prose`のスタイル指定を1か所に集約）。
                                    記事詳細・about・profile・privacy-policy・disclaimerの本文で共用する。Server Component
         PageTitle.tsx            … 固定ページのh1（タイトル＋下罫線＋本文との余白）。about・profile・privacy-policy・disclaimerで共用する。Server Component
-        layout/                  … ページの枠組みになる部品（Header / Footer / Breadcrumb / SidebarLayout / NavLink）。Server Component中心。
+        layout/                  … ページの枠組みになる部品（Header / Footer / Breadcrumb / SidebarLayout / NavLink / ScrollTopButton）。Server Component中心。
                                    Headerはロゴ・ナビに加えキャッチコピー行（全ページ共通で常時表示）も持つ（旧`features/home/CatchCopy`を統合）
                                    Breadcrumbはトップページの絞り込み時・記事詳細・プロフィールで共用する（「HOME > 現在地」表示）
                                    Client化が必要な最小単位（NavLink等）もここにフラットに置く

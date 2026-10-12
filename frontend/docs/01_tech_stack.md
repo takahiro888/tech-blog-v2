@@ -17,6 +17,7 @@
 
 ## セキュリティ
 
+- `server-only` — microCMSのAPIキーなどを扱うモジュールが、Client Componentから読み込まれたらビルドエラーにする（[global_design/07_api_design.md](../../docs/global_design/07_api_design.md)の4章参照）
 - `sanitize-html`（+ `@types/sanitize-html`）— microCMSのリッチエディタHTMLをServer Componentでサニタイズする（[global_design/07_api_design.md](../../docs/global_design/07_api_design.md)の4.1参照）
 
 ## PWA
@@ -43,4 +44,6 @@
 
 - `fetch`はデフォルトでキャッシュされない（v15以降）
 - Cache Components（`cacheComponents: true`）と`"use cache"`ディレクティブによる新しいキャッシュ制御（v16〜）
-- 現状の`next.config.ts`では`cacheComponents`は未設定
+- 現状の`next.config.ts`では`cacheComponents`は未設定。**有効にしない方針に決定**し、fetch単位のキャッシュ（`next.revalidate`・`next.tags`）を使う（[04_data_fetching_policy.md](./04_data_fetching_policy.md)の「キャッシュ戦略」参照）
+- `revalidateTag`は第2引数（`"max"`など）が必須。1引数の形は非推奨
+- `error.tsx`の再試行の関数は`retry`（データを取り直して再描画する）。従来の`reset`は残っているが、データを取り直さない

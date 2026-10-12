@@ -91,9 +91,11 @@
 |---|---|---|
 | `MICROCMS_SERVICE_DOMAIN` | microCMSのサービスドメイン | サーバー専用 |
 | `MICROCMS_API_KEY` | 読み取り用APIキー（GET権限のみ） | サーバー専用。`NEXT_PUBLIC_`を付けない |
+| `MICROCMS_WEBHOOK_SECRET` | microCMSのWebhookに設定するシークレット値。再検証APIへのリクエストが本物のmicroCMSから来たかを署名で確かめる | サーバー専用。Vercelでは本番環境にだけ設定する |
 | `SITE_URL` | サイトのオリジン（例: 本番は`https://<本番ドメイン>`、ローカルは`http://localhost:3000`。末尾の`/`は付けない）。ドメイン取得前は`https://tech-blog-v2-lemon.vercel.app`を使い、取得後に値だけ差し替える。シェアボタンの記事URLとOGPの`metadataBase`に使う | サーバー専用。シェアボタンはServer Componentで組み立てるため`NEXT_PUBLIC_`は不要。Vercelでは本番環境の値に本番ドメインを設定する |
 
-- 未設定の場合、現状のクライアント生成は空文字で続行してしまう。起動時に検知して失敗させる（実装時の改善候補）
+- 必須の環境変数は`shared/lib/env.ts`の`getRequiredEnv(name)`で読み、未設定なら`環境変数 ◯◯ が設定されていません`というエラーにする。`external/microcms/client.ts`の`MICROCMS_SERVICE_DOMAIN`・`MICROCMS_API_KEY`と、`shared/lib/site-url.ts`の`SITE_URL`で共用する
+- 訂正: 以前は「未設定だと空文字で続行してしまう」と書いていたが、microCMS SDKの`createClient`は空文字を受け取ると`parameter is required (check serviceDomain and apiKey)`を投げるため、実際には失敗していた。ただし、どちらの変数が足りないのかが分からないメッセージなので、`getRequiredEnv`で変数名が分かるエラーにそろえる
 - APIキーはコミットしない（`.env`はGit管理外）
 
 ## 3. エラーハンドリング
@@ -111,7 +113,8 @@
 ## 4. セキュリティ
 
 - 本文HTMLは`dangerouslySetInnerHTML`で描画するため、**サニタイズ**を通す（許可タグを絞る）。入稿者は本人だが、防御を一段入れておく（詳細は下記4.1）
-- APIキーをクライアントバンドルに含めない（`external/`はサーバー専用。`server-only`パッケージでの保護を検討）
+- APIキーをクライアントバンドルに含めない。`external/microcms/client.ts`・`shared/lib/env.ts`・`shared/lib/site-url.ts`の先頭で`import "server-only"`し、Client Componentから（間接的にでも）読み込まれたらビルドエラーにする。`external/microcms/`の各ファイルはすべて`client.ts`を読み込むため、`client.ts`に書けば外部層全体が守られる
+- `server-only`はテスト環境（Vitest）では読み込むとエラーになるため、`server-only`を読み込むファイルを直接テストする場合は、テスト側で`vi.mock("server-only", () => ({}))`を書く（既存の`blogs.test.ts`は`client.ts`ごとモックしているので影響しない）
 - 外部リンク（SNS）は`rel="noopener noreferrer"`、新規タブで開く
 
 ### 4.1 リッチテキストのサニタイズ
@@ -139,21 +142,29 @@
 
 ## 5. 再検証（キャッシュ更新）
 
-記事更新をサイトへ反映する方法の選択肢（実装時に判断）。
+**時間経過での更新**と**オンデマンド更新**の両方を採用する。普段は1時間キャッシュし、記事を公開・更新したらmicroCMSのWebhookですぐに反映する。Webhookが失敗しても、最長1時間後には反映される。
 
-| 方式 | 内容 |
-|---|---|
-| 時間経過で更新 | `cacheLife`／ISRで一定時間ごとに再取得。追加実装なし |
-| オンデマンド更新 | microCMSのWebhook → `POST /api/revalidate`（Route Handler、秘密トークンで保護）→ `revalidateTag("blogs")`。**これが本アプリで唯一の書き込み系に近いAPI** |
+**キャッシュの付け方**
 
-オンデマンド更新を採用する場合の仕様は次のとおり。
+- Cache Components（`cacheComponents: true`）は有効にしない。有効にすると`searchParams`を使うトップページなどでSuspenseの配置の見直しが必要になり、変更範囲が大きいため（[frontend/04_data_fetching_policy.md](../../frontend/docs/04_data_fetching_policy.md)の「キャッシュ戦略」参照）
+- 代わりに、microCMS SDKの`customRequestInit`でfetchに`next: { revalidate: 3600, tags: [エンドポイント名] }`を渡す。SDKは内部で`fetch`を使うため、Next.jsのデータキャッシュがそのまま効く
+- タグはエンドポイント名と同じにする（`blogs`・`profile`・`about`・`privacy-policy`・`disclaimer`）。Webhookのペイロードの`api`にエンドポイント名が入るので、受け取った値をそのまま`revalidateTag`に渡せる
+- 有効期間とタグを付ける処理は`external/microcms/client.ts`に`buildCacheOptions(endpoint)`として1か所にまとめ、各取得関数から使う
+
+**オンデマンド更新のAPI**
 
 | 項目 | 内容 |
 |---|---|
-| URL | `POST /api/revalidate` |
-| 認証 | 共有シークレット（ヘッダーまたはクエリ）。不一致は401 |
-| 成功 | `200 { "revalidated": true }` |
-| 失敗 | `401`（認証失敗）／`400`（不正なペイロード） |
+| URL | `POST /api/revalidate`（`app/api/revalidate/route.ts`） |
+| 呼び出し元 | microCMSの各APIの「Webhook」→「カスタム通知」。公開・更新・削除のタイミングで送られる |
+| 認証 | microCMSがリクエスト本文を`MICROCMS_WEBHOOK_SECRET`でHMAC-SHA256署名し、`X-MICROCMS-Signature`ヘッダーに入れて送る。受け取った本文から同じ方法で署名を作り、`crypto.timingSafeEqual`で比較する。一致しなければ`401` |
+| 処理 | ペイロードの`api`が許可したエンドポイント名なら`revalidateTag(api, "max")`を呼ぶ。Next.js 16では第2引数が必須で、`"max"`は「次のアクセスでは古い内容を返しつつ裏で取り直す」動き |
+| 成功 | `200 { "revalidated": true, "tag": "blogs" }` |
+| 失敗 | `401`（署名なし・不一致）／`400`（本文がJSONでない、`api`が許可リストにない） |
+
+- 署名の検証と`api`の判定は条件分岐を含むロジックなので、Route Handlerから切り出して`external/microcms/webhook.ts`（`verifyWebhookSignature`・`resolveRevalidateTag`）に置き、テストを書く。署名の方式もペイロードの形もmicroCMS固有なので、外部層に置く
+- 署名ヘッダー名とペイロードの形式は、設定時にmicroCMSの管理画面とドキュメントで確認する
+- **これが本アプリで唯一の書き込み系に近いAPI**。記事の内容は受け取らず、キャッシュを捨てる合図としてだけ使う
 
 ## 6. 廃止するAPI（参考）
 

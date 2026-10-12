@@ -75,6 +75,8 @@
 - SEOを意識したメタデータ（Next.jsの`metadata` / `generateMetadata`）を各ページに設定する。ページごとのtitle・descriptionは[04_ui_design.md](./04_ui_design.md)の10.1参照。
 - 存在しないURL・記事IDには404ページを返す（`notFound()`と`app/not-found.tsx`）。
 - microCMSのリッチエディタHTMLは、描画前にサーバー側でサニタイズする（[07_api_design.md](./07_api_design.md)参照）。
+- サイトマップ（`/sitemap.xml`）と`robots.txt`を配信し、検索エンジンに記事のURLを伝える（[04_ui_design.md](./04_ui_design.md)の10.2参照）。
+- microCMSの記事は1時間キャッシュし、公開・更新時はWebhookで即時に反映する（[07_api_design.md](./07_api_design.md)の5章参照）。
 - PWAとしてホーム画面に追加（インストール）できるようにする。オフライン対応・プッシュ通知はスコープ外（[04_ui_design.md](./04_ui_design.md)の12章参照）。
 - デプロイはVercel想定（現行構成から変更なし）。
 

@@ -127,21 +127,29 @@ export function ArticleGrid({ articles }: { articles: Blog[] }) {
 
 現状の記事数（6件程度、モックでのページネーション確認用ダミーは30件）では案Aで十分。記事が増えてきたタイミングで案Bへの移行を検討する、という2段階の方針を推奨する。
 
-## キャッシュ戦略（任意・発展）
+## キャッシュ戦略
 
-Next.js 16では`cacheComponents: true`（`next.config.ts`）を有効にすると、`"use cache"`ディレクティブでデータ取得結果のキャッシュ期間を明示的に制御できる（現状の`next.config.ts`では未設定）。
+**決定: Cache Componentsは有効にせず、fetch単位のキャッシュ（`next.revalidate`・`next.tags`）とmicroCMSのWebhookによる再検証を使う。** 詳細な仕様は[global_design/07_api_design.md](../../docs/global_design/07_api_design.md)の「5. 再検証」。
+
+| 案 | 内容 | 判断 |
+|---|---|---|
+| Cache Components（`cacheComponents: true` + `"use cache"` + `cacheLife` / `cacheTag`） | Next.js 16の新方式。関数やコンポーネント単位でキャッシュを宣言する | **不採用**。有効化すると、キャッシュされないデータ（`searchParams`等）に触れる箇所をSuspenseで囲む必要があり、トップページの構成の見直しが必要になる。記事数・更新頻度から見て、そこまでの効果がない |
+| fetch単位のキャッシュ（Cache Componentsなし） | `fetch(url, { next: { revalidate, tags } })`。Next.js公式の「caching-without-cache-components」ガイドの方式 | **採用**。microCMS SDKの`customRequestInit`で渡せるため、`external/`層の中だけで完結する |
 
 ```ts
-// external/microcms/blogs.ts（イメージ、Cache Components有効時）
-import { cacheLife, cacheTag } from "next/cache";
+// external/microcms/client.ts（イメージ）
+export function buildCacheOptions(endpoint: MicroCMSEndpoint) {
+  return { next: { revalidate: 3600, tags: [endpoint] } };
+}
 
-export async function getBlogList() {
-  "use cache";
-  cacheLife("hours");
-  cacheTag("blogs");
-
-  return microcmsClient.getList<Blog>({ endpoint: "blogs" });
+// external/microcms/blogs.ts（イメージ）
+export function getBlogList() {
+  return microcmsClient.getAllContents<Blog>({
+    endpoint: "blogs",
+    customRequestInit: buildCacheOptions("blogs"),
+  });
 }
 ```
 
-microCMSの記事更新頻度はそれほど高くないと想定されるため、`cacheLife("hours")`程度の緩やかなキャッシュで十分機能する。`cacheComponents`を有効化するかどうかは、他のNext.js 16特有の挙動（Suspenseの扱い、ビルド時の検証が厳しくなる点）も理解した上で判断した方がよいため、**このドキュメントでは方針の提示に留め、有効化の判断はご自身で行ってください**。有効化しない場合でも、Server Component + `external`層への切り出しというここまでの方針はそのまま活かせる。
+- 開発中（`next dev`）は、ブラウザのスーパーリロードなどで`cache-control: no-cache`が付くとキャッシュが無視される（Next.jsの仕様）。キャッシュの効き方は`npm run build && npm run start`で確認する
+- 将来、Cache Componentsへ移行する場合も、キャッシュの指定が`external/`層に閉じているので、変更はこの層の中で済む
