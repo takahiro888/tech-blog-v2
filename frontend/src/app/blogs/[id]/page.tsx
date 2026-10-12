@@ -14,13 +14,14 @@ export async function generateMetadata({
   params,
 }: BlogDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  return buildArticleMetadata(await getArticle(id));
+  const blog = await getArticle(id);
+  if (!blog) notFound();
+  return buildArticleMetadata(blog);
 }
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { id } = await params;
   const blog = await getArticle(id);
-
   if (!blog) notFound();
 
   return (
