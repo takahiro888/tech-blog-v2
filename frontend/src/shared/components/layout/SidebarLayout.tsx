@@ -24,7 +24,7 @@ export async function SidebarLayout({
 
   return (
     <div className="mx-auto grid w-full max-w-6xl gap-16 px-4 py-10 lg:grid-cols-[1fr_270px]">
-      <main>{children}</main>
+      <div className="min-w-0">{children}</div>
       <Sidebar
         articles={sidebarArticles}
         searchKeyword={searchKeyword}
