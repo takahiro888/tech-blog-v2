@@ -32,11 +32,6 @@ export function ArticleCard({ article }: { article: Blog }) {
         <h2 className="text-lg font-bold group-hover:text-blue-700">
           {article.title}
         </h2>
-        {article.excerpt && (
-          <p className="line-clamp-2 text-sm text-base-content/60">
-            {article.excerpt}
-          </p>
-        )}
         <ul className="flex flex-wrap gap-2">
           {categories.map((c) => (
             <li key={c} className="rounded bg-base-200 px-2 py-0.5 text-xs">
