@@ -60,7 +60,7 @@
     - 記事詳細の`generateMetadata`にOGP（`openGraph`・`twitter`）を、ルートの`metadata`に`metadataBase`を設定する。メタデータの組み立ては`features/blog-detail/lib/article-metadata.ts`、記事の取得は`get-article.ts`に置き、`app/blogs/[id]/page.tsx`は組み立てだけにする
     - 仕様は`docs/global_design/04_ui_design.md`の「6.1 シェアボタン」を参照
 
-### フェーズ3: SEO・堅牢性・PWA
+### フェーズ3: SEO・堅牢性・PWA ✅ 完了
 
 11. **存在しない記事の404表示**
     - `external/microcms/blogs.ts`の`getBlogDetail`を、microCMSが404を返したときだけ`null`を返す形にする（`isMicroCMSRequestError`で判定。それ以外のエラーは投げる）。先に`tests/external/microcms/blogs.test.ts`へ404・500のテストを追加する
