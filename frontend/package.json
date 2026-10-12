@@ -20,7 +20,8 @@
     "microcms-js-sdk": "^3.5.0",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sanitize-html": "^2.18.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -30,6 +31,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sanitize-html": "^2.16.2",
     "@vitejs/plugin-react": "^6.1.1",
     "daisyui": "^5.7.28",
     "eslint": "^9",
