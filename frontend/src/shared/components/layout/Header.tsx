@@ -11,8 +11,9 @@ const NAV_ITEMS = [
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-t-4 border-t-slate-800 border-b border-b-base-300 bg-base-100 shadow-sm">
-      <div className="flex items-center justify-between px-16 py-6">
+    // スマホは2段で背が高くなるため、画面上部への固定はPCのみ
+    <header className="z-50 border-t-4 border-t-slate-800 border-b border-b-base-300 bg-base-100 shadow-sm lg:sticky lg:top-0">
+      <div className="flex flex-col gap-4 px-4 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-16 lg:py-6">
         <div>
           <Link href="/" className="flex items-center gap-3">
             <Image src="/logo.svg" alt="" width={40} height={40} priority />
@@ -20,14 +21,14 @@ export function Header() {
             <span aria-hidden className="h-5 w-px bg-base-300" />
             <span className="text-xs text-base-content/60">技術ブログ</span>
           </Link>
-          <p className="pt-1 text-sm text-base-content/60">
+          <p className="pt-1 text-xs text-base-content/60 sm:text-sm">
             {CATCH_COPY.subtitle}
           </p>
         </div>
-        <nav aria-label="メインナビゲーション">
-          <ul className="flex gap-6 text-sm">
+        <nav aria-label="メインナビゲーション" className="overflow-x-auto">
+          <ul className="flex gap-5 text-sm lg:gap-6">
             {NAV_ITEMS.map((item) => (
-              <li key={item.href}>
+              <li key={item.href} className="whitespace-nowrap">
                 <NavLink href={item.href} activePrefixes={item.activePrefixes}>
                   {item.label}
                 </NavLink>
