@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getSiteUrl } from "@/shared/lib/site-url";
 import type { ReactNode } from "react";
+import { ScrollTopButton } from "@/shared/components/layout/ScrollTopButton";
 import { Header } from "@/shared/components/layout/Header";
 import { Footer } from "@/shared/components/layout/Footer";
 import "./globals.css";
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Header />
         <main className="flex flex-1 flex-col">{children}</main>
         <Footer />
+        <ScrollTopButton />
       </body>
     </html>
   );
