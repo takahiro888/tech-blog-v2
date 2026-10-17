@@ -11,7 +11,7 @@ export const SITE_NAME = "KAIZEN 技術ブログ";
 export const SITE_DESCRIPTION = CATCH_COPY.subtitle;
 export const THEME_COLOR = "#1e293b";
 
-export const SIDEBAR_MESSAGE = "「わからない」は、前に進んでいる証拠。";
+export const SIDEBAR_MESSAGE = "日々改善。日々成長。";
 
 export const FOOTER_LINKS = [
   { href: "/", label: "HOME" },
