@@ -1,9 +1,8 @@
+import "server-only"
+import { getRequiredEnv } from "./env"
+
 export function getSiteUrl(): string {
-  const siteUrl = process.env.SITE_URL;
-  if (!siteUrl) {
-    throw new Error("環境変数 SITE_URL が設定されていません");
-  }
-  return siteUrl;
+  return getRequiredEnv("SITE_URL");
 }
 
 export function buildAbsoluteUrl(path: string): string {

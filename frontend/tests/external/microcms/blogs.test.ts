@@ -9,6 +9,8 @@ vi.mock("@/external/microcms/client", () => ({
   },
 }));
 
+const CACHE_OPTIONS = { next: { revalidate: 3600, tags: ["blogs"] } };
+
 function createMicroCMSError(status: number) {
   return Object.assign(
     new Error(`fetch API responsestatus status: ${status}`),
@@ -25,6 +27,7 @@ describe("getBlogList", () => {
     await getBlogList();
     expect(microcmsClient.getAllContents).toHaveBeenCalledWith({
       endpoint: "blogs",
+      customRequestInit: CACHE_OPTIONS,
     });
   });
 });
@@ -35,6 +38,7 @@ describe("getBlogDetail", () => {
     expect(microcmsClient.getListDetail).toHaveBeenCalledWith({
       endpoint: "blogs",
       contentId: "abc123",
+      customRequestInit: CACHE_OPTIONS,
     });
   });
 
