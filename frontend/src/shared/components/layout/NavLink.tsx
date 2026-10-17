@@ -8,9 +8,9 @@ type NavLinkProps = {
   href: string;
   children: ReactNode;
   activePrefixes?: string[];
-};
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
-export function NavLink({ href, children, activePrefixes = [] }: NavLinkProps) {
+export function NavLink({ href, children, activePrefixes = [], ...props }: NavLinkProps) {
   const pathname = usePathname();
   const active =
     pathname === href || activePrefixes.some((prefix) => pathname.startsWith(prefix));
@@ -24,6 +24,7 @@ export function NavLink({ href, children, activePrefixes = [] }: NavLinkProps) {
           ? "border-b-2 border-blue-700 pb-1 font-bold text-blue-700"
           : "border-b-2 border-transparent pb-1 hover:text-blue-700"
       }
+      {...props}
     >
       {children}
     </Link>
