@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { NavLink } from "@/shared/components/layout/NavLink";
 import { MobileMenu } from "@/shared/components/layout/MobileMenu";
 import { CATCH_COPY } from "@/shared/lib/constants";
 
@@ -38,7 +39,15 @@ export function Header() {
           </p>
         </div>
         <nav aria-label="メインナビゲーション" className="hidden lg:block">
-          ...
+          <ul className="flex gap-6 text-sm">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.href} className="whitespace-nowrap">
+                <NavLink href={item.href} activePrefixes={item.activePrefixes}>
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
         </nav>
         <MobileMenu navItems={NAV_ITEMS} />
       </div>
