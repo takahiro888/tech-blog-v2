@@ -25,6 +25,7 @@
 | `getBlogDetail(id)` | 記事1件の取得 | `id: string` | `Article \| null`。microCMSが404を返したときだけ`null`を返し、それ以外のエラーはそのまま投げる。`null`のとき呼び出し側（記事詳細）で`notFound()`を呼ぶ |
 | `getProfile()` | 著者情報の取得（`/profile`と全ページのサイドバー著者カード） | なし | `Author`（`profile`はオブジェクト形式のため`getObject`で取得） |
 | `getAbout()` | このブログについての本文取得（`/about`） | なし | `About`（`about`はオブジェクト形式のため`getObject`で取得） |
+| `getPrivacyPolicy()` / `getDisclaimer()` | 規約系ページの本文取得（`/privacy-policy`・`/disclaimer`。それぞれ別ファイル） | なし | `LegalPage`（オブジェクト形式のため`getObject`で取得） |
 
 ### 取得方針
 
@@ -78,7 +79,7 @@
 | microCMSのフィールド | Article | 変換 |
 |---|---|---|
 | `id` | `id` | そのまま |
-| `title` / `excerpt` | `title` / `excerpt` | そのまま。`excerpt`未設定なら本文先頭から生成する案もある（要判断） |
+| `title` / `excerpt` | `title` / `excerpt` | そのまま。`excerpt`は画面に表示せず、記事詳細のdescription・OGPにのみ使う。未設定のときはルートの既定のdescription（キャッチコピー）になる。本文先頭から生成する案は採用しない |
 | `content` | `body` | そのまま（HTML） |
 | `categories[]` | `categories[]` | 文字列（カテゴリ名）の配列のまま。未設定の記事はキー自体が無いので空配列にする |
 | （microCMSに無し） | `card` | `label`=先頭カテゴリ名、`theme`=先頭カテゴリからの固定マッピング（該当なしは`blue`）で導出 |

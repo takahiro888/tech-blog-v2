@@ -64,7 +64,7 @@
 ### プライバシーポリシー（`/privacy-policy`、新規）・免責事項（`/disclaimer`、新規）
 
 - フッターのリンク先となる規約系ページ。パンくず（HOME > ページ名）＋見出し＋本文で、構成は`/about`と同じ
-- 本文の管理方法（microCMSか静的か）は要判断（[04_ui_design.md](./04_ui_design.md)参照）
+- 本文はmicroCMSのオブジェクト形式（`privacy-policy`・`disclaimer`）で管理する。`/about`と同じく、運営者が管理画面から編集できるようにするため
 
 ## 非機能要件
 

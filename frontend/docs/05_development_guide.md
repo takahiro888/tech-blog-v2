@@ -18,7 +18,7 @@
 2. ✅ `.github/workflows/ci.yml`を更新し、`frontend/`ディレクトリ内でコマンドを実行するように変更（`working-directory: frontend`を各ステップに追加、`cache-dependency-path: frontend/package-lock.json`も指定）
 3. ✅ `frontend/.gitignore`を新規作成 — ルートの`.gitignore`は`/node_modules`・`/.next/`等が**ルート起点のパターン**のため、`frontend/`配下には効かない。同等のルールを`frontend/.gitignore`に追加した
 4. ✅ デプロイ先（Vercel）のRoot Directory設定を`frontend`に変更する（`https://tech-blog-v2-lemon.vercel.app`で公開済み）
-5. ⬜ `frontend/`ディレクトリ内で`npm run dev` / `npm run build` / `npm run test:run`が問題なく動くことを確認する（未実施、各自確認）
+5. ✅ `frontend/`ディレクトリ内で`npm run dev` / `npm run build` / `npm run test:run`が問題なく動くことを確認する
 
 ### フェーズ1: ディレクトリ構造の再編（`frontend/`内部の整理）✅ 完了
 
@@ -51,7 +51,7 @@
    - 仕様は`docs/global_design/04_ui_design.md`の「プロフィールページ」を参照
 9. **フッターと規約系ページの作成**
    - `shared/components/layout/Footer.tsx`（Server Component）を作り、`app/layout.tsx`でメインの後ろに置く。リンク一覧とコピーライトは`shared/lib/constants.ts`の定数から描画する
-   - フッターのリンク先`/privacy-policy`・`/disclaimer`を`/about`と同じ構成で作成する（本文の管理方法は要判断）。ページが未実装のままフッターを出すとリンク切れになるため、同じタイミングで用意する
+   - フッターのリンク先`/privacy-policy`・`/disclaimer`を`/about`と同じ構成で作成する（本文はmicroCMSのオブジェクト形式で管理する）。ページが未実装のままフッターを出すとリンク切れになるため、同じタイミングで用意する
    - 仕様は`docs/global_design/04_ui_design.md`の「3.4 フッター」「8.5 プライバシーポリシー・免責事項」を参照
 10. **記事詳細のシェアボタン**
     - `.env`とVercelに`SITE_URL`を追加する（`docs/global_design/07_api_design.md`の「認証・環境変数」参照）
@@ -85,7 +85,7 @@
 15. **記事カードの要約の削除**
     - `features/blog-list/components/ArticleCard.tsx`から`excerpt`の表示を削除する（microCMSの`excerpt`フィールドと型は、記事詳細のdescription用に残す）
 
-### フェーズ4: 仕上げ（見た目・堅牢性・SEO）
+### フェーズ4: 仕上げ（見た目・堅牢性・SEO）✅ 完了
 
 16. **スマホでのヘッダー表示**
     - `shared/components/layout/Header.tsx`を、スマホ・タブレットでは2段構成、PCでは1段にする。画面上部への固定はPCのみにする
