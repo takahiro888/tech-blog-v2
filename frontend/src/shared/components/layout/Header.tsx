@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { MobileMenu } from "@/shared/components/layout/MobileMenu";
 import { CATCH_COPY } from "@/shared/lib/constants";
-import { NavLink } from "./NavLink";
 
 const NAV_ITEMS = [
   { href: "/", label: "記事一覧", activePrefixes: ["/blogs/"] },
@@ -11,31 +11,36 @@ const NAV_ITEMS = [
 
 export function Header() {
   return (
-    // スマホは2段で背が高くなるため、画面上部への固定はPCのみ
-    <header className="z-50 border-t-4 border-t-slate-800 border-b border-b-base-300 bg-base-100 shadow-sm lg:sticky lg:top-0">
-      <div className="flex flex-col gap-4 px-4 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-16 lg:py-6">
+    // ヘッダーが1段に収まるので、スマホでも上部に固定してよい（lg:sticky lg:top-0 → sticky top-0）
+    <header className="sticky top-0 z-50 border-t-4 border-t-slate-800 border-b border-b-base-300 bg-base-100 shadow-sm">
+      <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-8 lg:px-16 lg:py-6">
         <div>
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.svg" alt="" width={40} height={40} priority />
-            <span className="text-xl font-bold tracking-[0.2em]">KAIZEN</span>
-            <span aria-hidden className="h-5 w-px bg-base-300" />
-            <span className="text-xs text-base-content/60">技術ブログ</span>
+          <Link href="/" className="flex items-center gap-2 lg:gap-3">
+            <Image
+              src="/logo.svg"
+              alt=""
+              width={40}
+              height={40}
+              priority
+              className="size-8 lg:size-10"
+            />
+            <span className="text-lg font-bold tracking-[0.2em] lg:text-xl">
+              KAIZEN
+            </span>
+            <span aria-hidden className="h-4 w-px bg-base-300 lg:h-5" />
+            <span className="text-[10px] text-base-content/60 lg:text-xs">
+              技術ブログ
+            </span>
           </Link>
-          <p className="pt-1 text-xs text-base-content/60 sm:text-sm">
+          {/* スマホでは非表示 */}
+          <p className="hidden pt-1 text-sm text-base-content/60 lg:block">
             {CATCH_COPY.subtitle}
           </p>
         </div>
-        <nav aria-label="メインナビゲーション" className="overflow-x-auto">
-          <ul className="flex gap-5 text-sm lg:gap-6">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.href} className="whitespace-nowrap">
-                <NavLink href={item.href} activePrefixes={item.activePrefixes}>
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+        <nav aria-label="メインナビゲーション" className="hidden lg:block">
+          ...
         </nav>
+        <MobileMenu navItems={NAV_ITEMS} />
       </div>
     </header>
   );
