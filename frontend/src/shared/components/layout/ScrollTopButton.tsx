@@ -1,35 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-
-const SHOW_THRESHOLD_PX = 400;
-
-function subscribeScroll(onChange: () => void) {
-  window.addEventListener("scroll", onChange, { passive: true });
-  return () => {
-    window.removeEventListener("scroll", onChange);
-  };
-}
-
-function getIsScrolled() {
-  return window.scrollY > SHOW_THRESHOLD_PX;
-}
-
-// サーバーで描画するときはwindowが存在しないため、非表示として扱う
-function getIsScrolledOnServer() {
-  return false;
-}
-
 export function ScrollTopButton() {
-  const isScrolled = useSyncExternalStore(
-    subscribeScroll,
-    getIsScrolled,
-    getIsScrolledOnServer,
-  );
-
-  // 非表示にTabキーでフォーカスが当たらないよう、隠すのではなく描画しない
-  if (!isScrolled) return null;
-
   const scrollToTop = () => {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -45,7 +16,7 @@ export function ScrollTopButton() {
       type="button"
       onClick={scrollToTop}
       aria-label="ページの先頭へ戻る"
-      className="fixed right-6 bottom-6 z-40 flex size-12 items-center justify-center rounded-full bg-slate-800 text-white shadow-lg hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+      className="fixed right-6 bottom-6 z-40 flex size-12 items-center justify-center rounded-full border-2 border-slate-300 bg-white text-slate-400 shadow-md hover:border-slate-400 hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
     >
       <svg
         aria-hidden="true"
