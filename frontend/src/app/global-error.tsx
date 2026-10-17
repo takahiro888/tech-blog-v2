@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
-import { PageTitle } from "@/shared/components/PageTitle";
 import { SITE_NAME } from "@/shared/lib/constants";
 
 type GlobalErrorProps = {
