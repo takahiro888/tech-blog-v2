@@ -93,7 +93,7 @@
 | `MICROCMS_SERVICE_DOMAIN` | microCMSのサービスドメイン | サーバー専用 |
 | `MICROCMS_API_KEY` | 読み取り用APIキー（GET権限のみ） | サーバー専用。`NEXT_PUBLIC_`を付けない |
 | `MICROCMS_WEBHOOK_SECRET` | microCMSのWebhookに設定するシークレット値。再検証APIへのリクエストが本物のmicroCMSから来たかを署名で確かめる | サーバー専用。Vercelでは本番環境にだけ設定する |
-| `SITE_URL` | サイトのオリジン（例: 本番は`https://<本番ドメイン>`、ローカルは`http://localhost:3000`。末尾の`/`は付けない）。ドメイン取得前は`https://tech-blog-v2-lemon.vercel.app`を使い、取得後に値だけ差し替える。シェアボタンの記事URLとOGPの`metadataBase`に使う | サーバー専用。シェアボタンはServer Componentで組み立てるため`NEXT_PUBLIC_`は不要。Vercelでは本番環境の値に本番ドメインを設定する |
+| `SITE_URL` | サイトのオリジン（本番は`https://www.kaizen-tech-blog.com`、ローカルは`http://localhost:3000`。末尾の`/`は付けない）。シェアボタンの記事URLとOGPの`metadataBase`に使う | サーバー専用。シェアボタンはServer Componentで組み立てるため`NEXT_PUBLIC_`は不要。Vercelでは本番環境の値に本番ドメイン（`https://www.kaizen-tech-blog.com`）を設定する。値を変えたら再デプロイしないと反映されない |
 
 - 必須の環境変数は`shared/lib/env.ts`の`getRequiredEnv(name)`で読み、未設定なら`環境変数 ◯◯ が設定されていません`というエラーにする。`external/microcms/client.ts`の`MICROCMS_SERVICE_DOMAIN`・`MICROCMS_API_KEY`と、`shared/lib/site-url.ts`の`SITE_URL`で共用する
 - 訂正: 以前は「未設定だと空文字で続行してしまう」と書いていたが、microCMS SDKの`createClient`は空文字を受け取ると`parameter is required (check serviceDomain and apiKey)`を投げるため、実際には失敗していた。ただし、どちらの変数が足りないのかが分からないメッセージなので、`getRequiredEnv`で変数名が分かるエラーにそろえる

@@ -17,7 +17,7 @@
 1. ✅ アプリ本体のファイル・ディレクトリを`frontend/`配下へ移動（`git mv`。トラッキング対象外の`node_modules` / `.env` / `next-env.d.ts`は`mv`で移動、`.next`・`tsconfig.tsbuildinfo`はビルドキャッシュのため削除して再生成に委ねた）
 2. ✅ `.github/workflows/ci.yml`を更新し、`frontend/`ディレクトリ内でコマンドを実行するように変更（`working-directory: frontend`を各ステップに追加、`cache-dependency-path: frontend/package-lock.json`も指定）
 3. ✅ `frontend/.gitignore`を新規作成 — ルートの`.gitignore`は`/node_modules`・`/.next/`等が**ルート起点のパターン**のため、`frontend/`配下には効かない。同等のルールを`frontend/.gitignore`に追加した
-4. ✅ デプロイ先（Vercel）のRoot Directory設定を`frontend`に変更する（`https://tech-blog-v2-lemon.vercel.app`で公開済み）
+4. ✅ デプロイ先（Vercel）のRoot Directory設定を`frontend`に変更する（当初は`https://tech-blog-v2-lemon.vercel.app`で公開。現在の本番URLは`https://www.kaizen-tech-blog.com`）
 5. ✅ `frontend/`ディレクトリ内で`npm run dev` / `npm run build` / `npm run test:run`が問題なく動くことを確認する
 
 ### フェーズ1: ディレクトリ構造の再編（`frontend/`内部の整理）✅ 完了

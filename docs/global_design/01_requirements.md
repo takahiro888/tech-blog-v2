@@ -78,7 +78,7 @@
 - サイトマップ（`/sitemap.xml`）と`robots.txt`を配信し、検索エンジンに記事のURLを伝える（[04_ui_design.md](./04_ui_design.md)の10.2参照）。
 - microCMSの記事は1時間キャッシュし、公開・更新時はWebhookで即時に反映する（[07_api_design.md](./07_api_design.md)の5章参照）。
 - PWAとしてホーム画面に追加（インストール）できるようにする。オフライン対応・プッシュ通知はスコープ外（[04_ui_design.md](./04_ui_design.md)の12章参照）。
-- デプロイはVercel想定（現行構成から変更なし）。
+- デプロイはVercel（現行構成から変更なし）。本番URLは`https://www.kaizen-tech-blog.com`。ドメインはCloudflare Registrarで取得し、DNSもCloudflareで管理する（Vercel向けのレコードはプロキシなしの「DNSのみ」）。`kaizen-tech-blog.com`（wwwなし）へのアクセスはVercel側で`www`付きへリダイレクトする。
 
 ## スコープ外（将来検討）
 
