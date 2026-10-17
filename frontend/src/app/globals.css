@@ -5,7 +5,7 @@
   --foreground: #171717;
 }
 @plugin "daisyui" {
-  theme: light --default;
+  themes: light --default;
 }
 @plugin "@tailwindcss/typography";
 
