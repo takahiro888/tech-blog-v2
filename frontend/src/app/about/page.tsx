@@ -20,7 +20,7 @@ export default async function AboutPage() {
         items={[{ label: "HOME", href: "/" }, { label: "このブログについて" }]}
       />
       <SidebarLayout>
-        <PageTitle>このブログについて</PageTitle>
+        <PageTitle>「KAIZEN」ブログについて</PageTitle>
         {about.mainImage && (
           <Image
             src={about.mainImage.url}
