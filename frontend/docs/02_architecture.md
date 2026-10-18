@@ -8,7 +8,7 @@
 |---|---|---|---|
 | 1 | 意図的なレイヤー分離 | `app/`を薄く、`features/`がドメイン単位の司令塔、`external/`が外部接続点 | **採用**。詳細は[03_directory_structure.md](./03_directory_structure.md) |
 | 2 | ルーティングによるUX設計 | 認証状態（guest/authenticated/neutral）ごとにルートグループを分離 | **不採用（該当なし）**。本プロジェクトは認証を持たない公開ブログのため、ルートグループによる認証状態の表現は不要。将来管理画面等を追加する場合に再検討する |
-| 3 | Server-firstなデータフェッチ | サーバー側でキャッシュを構築し、HydrationBoundaryでクライアントに渡す | **趣旨を採用、実装手段は簡略化**。TanStack Queryは導入せず、Next.js 16のServer Components + `"use cache"`によるサーバー完結のデータ取得に統一する。詳細は[04_data_fetching_policy.md](./04_data_fetching_policy.md) |
+| 3 | Server-firstなデータフェッチ | サーバー側でキャッシュを構築し、HydrationBoundaryでクライアントに渡す | **趣旨を採用、実装手段は簡略化**。TanStack Queryは導入せず、Next.js 16のServer Components + fetch単位のキャッシュ（`next.revalidate`・`next.tags`）によるサーバー完結のデータ取得に統一する。詳細は[04_data_fetching_policy.md](./04_data_fetching_policy.md)、ページごとのレンダリング方式は[06_rendering_strategy.md](./06_rendering_strategy.md) |
 | 4 | 設計の仕組み化 | ESLintカスタムルール、DTO検証、Error Boundaryで設計品質を自動的に守る | **将来検討**。まずは手動でレイヤー分離を守り、破られやすくなったらESLintルールの追加を検討する（[05_development_guide.md](./05_development_guide.md)のTODOに記載） |
 
 ## 3層構造
