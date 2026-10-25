@@ -5,6 +5,7 @@
 Next.js（App Router）と microCMS で作っている個人の技術ブログです。
 
 - 本番: https://www.kaizen-tech-blog.com
+<img width="1400" height="788" alt="image" src="https://github.com/user-attachments/assets/81dca98b-4ba3-46b3-84f9-79c2bc920463" />
 
 ## このプロジェクトについて
 
@@ -16,7 +17,6 @@ Next.js（App Router）と microCMS で作っている個人の技術ブログ�
 
 設計の参考:
 
-- [immortal-architecture-mvp](https://github.com/YukiOnishi1129/immortal-architecture-mvp)
 - [Next.js App Router アーキテクチャの設計思想](https://zenn.dev/yukionishi/articles/cd79e39ea6c172)
 
 ## 主な機能
