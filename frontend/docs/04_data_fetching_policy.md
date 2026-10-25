@@ -2,11 +2,11 @@
 
 参考記事の「Server-firstなデータフェッチ」を、本プロジェクトの規模に合わせて採用する。TanStack Query + HydrationBoundaryという構成は、クライアント側の複雑な状態管理（ミューテーション、楽観的更新等）を伴うアプリ向けの手段であり、読み取り専用のブログには過剰と判断して採用しない。代わりに、Next.js 16のServer Components中心の設計に寄せる。
 
-> 記事一覧ページ（`/blogs`）は廃止し、トップページ（`/`）が記事一覧を兼ねることになった（[docs/global_design/01_requirements.md](../../docs/global_design/01_requirements.md)）。以下の方針は`app/page.tsx`にそのまま適用する。
+> 記事一覧ページ（`/blogs`）は廃止し、トップページ（`/`）が記事一覧を兼ねている（[docs/global_design/01_requirements.md](../../docs/global_design/01_requirements.md)）。以下の方針は`app/page.tsx`に適用している。
 
-## 現状の課題
+## 移行前の課題（解消済み）
 
-`components/ArticleGrid.tsx`は`"use client"`で、`useEffect`内で`fetch`している。
+移行前の`components/ArticleGrid.tsx`は`"use client"`で、`useEffect`内で`fetch`していた。
 
 ```tsx
 "use client";
@@ -23,113 +23,62 @@ export function ArticleGrid({ fetchUrl, ... }: ArticleGridProps) {
 }
 ```
 
-この実装には以下の課題がある。
+この実装には以下の課題があった。
 
-- 初回表示時にクライアントでのfetchを待つ必要があり、SSRの恩恵（初期表示の速さ、SEO）を活かせていない
-- `app/api/blogs/route.ts`という内部API Routeを経由しており、二重のネットワークホップが発生している（ブラウザ → 自サーバーのAPI Route → microCMS）
-- Qiita記事一覧については`fetchUrl`にQiitaのURLを直接渡して取得していた（外部APIをクライアントから直接叩く形で、CORSやAPIキーの扱い的にも本来サーバー側で行うべき実装だった。今回はQiita連携自体がスコープ外化されたため、この問題は実装の削除とともに解消される）
+- 初回表示時にクライアントでのfetchを待つ必要があり、SSRの恩恵（初期表示の速さ、SEO）を活かせていなかった
+- `app/api/blogs/route.ts`という内部API Routeを経由しており、二重のネットワークホップが発生していた（ブラウザ → 自サーバーのAPI Route → microCMS）
+- Qiita記事一覧については`fetchUrl`にQiitaのURLを直接渡して取得していた（外部APIをクライアントから直接叩く形で、本来サーバー側で行うべき実装だった。Qiita連携自体がスコープ外化されたため、実装の削除とともに解消した）
 
-## 目標: Server Componentでのデータ取得
+## 現在の方式: Server Componentで取得し、サーバーで絞り込む
 
-一覧・検索・カテゴリフィルタを含まない「静的な表示」部分はServer Componentで完結させる。
-
-```tsx
-// app/page.tsx（イメージ）
-import { getBlogList } from "@/external/microcms/blogs";
-import { ArticleGrid } from "@/features/blog-list/components/ArticleGrid";
-
-export default async function Home() {
-  const { contents } = await getBlogList();
-
-  return (
-    <div>
-      <ArticleGrid articles={contents} />
-    </div>
-  );
-}
-```
-
-`ArticleGrid`はデータ取得をやめ、propsで受け取ったデータを表示するだけの責務に絞る。旧案の「もっと見る」ボタンはページネーション（件数表示・表示件数セレクト・ページ番号）に置き換わった（[docs/global_design/04_ui_design.md](../../docs/global_design/04_ui_design.md)の「5.2.1 ページネーション」参照）。クライアント側は「現在のカテゴリ・検索語・月・ページ・表示件数」という状態だけを持ち、絞り込み＋ページ分割はpropsで渡された全件配列に対して純粋関数（[docs/global_design/05_domain_design.md](../../docs/global_design/05_domain_design.md)の`filterArticles`・`paginate`）を適用して計算する。
+データの取得も、絞り込み・ページ分割の計算も、すべてServer Componentの中で行う。クライアントには計算済みのHTMLだけが届く。
 
 ```tsx
-// features/blog-list/components/ArticleGrid.tsx（イメージ）
-"use client";
+// app/page.tsx（抜粋）
+export default async function Home({ searchParams }: HomeProps) {
+  const rawSearchParams = await searchParams;
+  const contents = await getBlogList(); // 全件（キャッシュ付き）
 
-import { useState } from "react";
-import type { Blog } from "@/external/microcms/types";
-import { ArticleCard } from "./ArticleCard";
-import { Pagination } from "./Pagination";
-import { PageSizeSelect } from "./PageSizeSelect";
-import { filterArticles } from "../lib/filter";
-import { paginate, getPageRange } from "../lib/paginate";
-
-const PAGE_SIZE_OPTIONS = [10, 20, 30] as const;
-
-export function ArticleGrid({ articles }: { articles: Blog[] }) {
-  const [category, setCategory] = useState<string>();
-  const [q, setQ] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
-
-  const filtered = filterArticles(articles, { category, q });
-  const visible = paginate(filtered, { page, pageSize });
-  const { start, end } = getPageRange(page, pageSize, filtered.length);
-
-  // カテゴリ・検索・表示件数を変えたら1ページ目に戻す
-  const resetToFirstPage = () => setPage(1);
+  const query = parseArticlesSearchParams(rawSearchParams);
+  const filteredArticles = filterArticles(contents, query);
+  const pagination = paginateArticles(filteredArticles, query.page, query.pageSize);
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <p>
-          {filtered.length}件中 {start}〜{end}件を表示
-        </p>
-        <PageSizeSelect
-          value={pageSize}
-          options={PAGE_SIZE_OPTIONS}
-          onChange={(size) => {
-            setPageSize(size);
-            resetToFirstPage();
-          }}
-        />
-      </div>
-      {visible.map((article) => (
-        <ArticleCard key={article.id} article={article} />
-      ))}
+    <SidebarLayout articles={contents} searchKeyword={query.keyword}>
+      <ResultSummary {...} />
+      <PageSizeSelect value={query.pageSize} />
+      <ArticleGrid articles={pagination.items} />
       <Pagination
-        page={page}
-        totalPages={Math.ceil(filtered.length / pageSize)}
-        onChange={setPage}
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        buildHref={(page) => buildArticlesHref(query, page)}
       />
-    </div>
+    </SidebarLayout>
   );
 }
 ```
 
-- 上記はイメージであり、実際にはカテゴリ・検索と同様に`page`/`pageSize`もURL（`searchParams`）へ同期させ、共有・ブラウザバックに対応させる（[docs/global_design/04_ui_design.md](../../docs/global_design/04_ui_design.md)の「5.5 URLパラメータ」参照）。同期方法は`useSearchParams` + `router.replace`（スクロール位置を保つため`scroll: false`推奨）などが候補になる
-- ページ・ページサイズをURLに持たせるかクライアントの`useState`のみに留めるかは実装時の判断だが、**全件をトップページ1つで閲覧できるようになった分、URLでの共有価値が上がっている**ため、同期を推奨する
+- 絞り込み・ページ分割の状態（`category` / `keyword` / `month` / `page` / `pageSize`）は、すべてURLの`searchParams`で持つ。共有・ブックマーク・ブラウザの戻る操作にそのまま対応できる（[docs/global_design/04_ui_design.md](../../docs/global_design/04_ui_design.md)の「5.5 URLパラメータ」参照）
+- 状態の変更は、ほぼすべてページ遷移で表す。サイドバーのカテゴリー・アーカイブと`Pagination`は`next/link`のリンク、検索ボックスは`<form method="GET">`の送信。Client Componentは表示件数セレクト（`PageSizeSelect`。選択時に`router.push`）だけ
+- `ArticleGrid`はデータ取得をやめ、propsで受け取った「そのページの記事」を並べるだけの責務に絞った。旧案の「もっと見る」ボタンはページネーションに置き換わった
+- 計算は純粋関数（`features/blog-list/lib/filter-articles.ts`）にまとめ、テストしている（[docs/global_design/05_domain_design.md](../../docs/global_design/05_domain_design.md)参照）
+- サイドバーの集計にも同じ全件配列を使う。トップページは取得済みの`contents`を`SidebarLayout`に渡し、二重に取得しない（他のページでは`SidebarLayout`が自分で取得する。キャッシュが効くので通信は増えない）
 
-## カテゴリフィルタ・検索・ページネーションの扱い
+### 検討した案と採用理由
 
-モックのカテゴリタブ・検索ボックス・ページネーション（件数表示・表示件数セレクト・ページ番号）は、以下2案のどちらかで実装できる。トップページ（`/`）が記事一覧を兼ねるようになったため、いずれの案でも対象は`app/page.tsx`になる。
+当初は次の2案で検討していた。
 
-### 案A: クライアント側フィルタ・ページ分割（実装が簡単、データ量が少ないうちはこちらで十分）
+| 案 | 内容 | 判断 |
+|---|---|---|
+| 案A: クライアント側で絞り込み | 全件をpropsで渡し、カテゴリ・検索語・ページ番号をクライアントの状態（`useState`）として持ってJS側で絞り込む | **不採用**。URLとの同期（`useSearchParams`＋`router.replace`）が別途必要になり、絞り込みのたびにクライアントで再計算する分、Client Componentが大きくなる |
+| 案A'（採用）: 全件取得＋サーバー側で絞り込み | 全件をServer Componentで取得し、`searchParams`に応じてサーバーで絞り込み・ページ分割する | **採用**。状態がURLだけで決まるので同期の処理が不要。全件取得はキャッシュされるので、絞り込みのたびにmicroCMSへ問い合わせることもない |
+| 案B: microCMS側で絞り込み | `searchParams`をmicroCMSの`filters`・`limit`/`offset`に変換し、該当ページ分だけを取得する | **将来検討**。記事数が増えて全件取得の負担が大きくなったら移行する。サイドバーの集計用に全件（またはカテゴリ・月の件数）が別途必要になる点に注意 |
 
-- Server Componentで全件取得し、propsとして渡す
-- タブ選択・検索文字列・ページ番号・表示件数はクライアント側の状態として持ち、渡された配列をJS側でフィルタ＋ページ分割する（`filterArticles` → `paginate`）
-- 状態をURLの`searchParams`（`category` / `keyword` / `month` / `page` / `pageSize`）へ同期させることは、この案のままでも可能。「計算をどこでやるか」と「状態をURLに表すか」は別軸であり、案Aでも`useSearchParams` + `router.replace`でURL同期だけ行える
-
-### 案B: URLの`searchParams`でサーバー側フィルタ・ページ取得（記事数が増えたら移行）
-
-- `/?category=react&keyword=hooks&page=2&pageSize=10`のようにURLに条件を持たせる
-- ページ（Server Component）が`searchParams`を受け取り、microCMSのフィルタクエリ（`filters`パラメータ）と`limit`/`offset`で、該当ページ分のみをmicroCMSから取得する
-- 1回のAPI呼び出しで全件を取得できなくなった場合（100件超）や、取得コストを下げたい場合に移行する
-
-現状の記事数（6件程度、モックでのページネーション確認用ダミーは30件）では案Aで十分。記事が増えてきたタイミングで案Bへの移行を検討する、という2段階の方針を推奨する。
+現状の記事数では案A'で十分。案Bへ移行する場合も、変更は`external/microcms/blogs.ts`の取得関数と`app/page.tsx`の組み立てに限られる。
 
 ## キャッシュ戦略
 
-**決定: Cache Componentsは有効にせず、fetch単位のキャッシュ（`next.revalidate`・`next.tags`）とmicroCMSのWebhookによる再検証を使う。** 詳細な仕様は[global_design/07_api_design.md](../../docs/global_design/07_api_design.md)の「5. 再検証」。
+**決定: Cache Componentsは有効にせず、fetch単位のキャッシュ（`next.revalidate`・`next.tags`）とmicroCMSのWebhookによる再検証を使う。** 詳細な仕様は[global_design/07_api_design.md](../../docs/global_design/07_api_design.md)の「5. 再検証」、ページごとのレンダリング方式は[06_rendering_strategy.md](./06_rendering_strategy.md)。
 
 | 案 | 内容 | 判断 |
 |---|---|---|
@@ -137,12 +86,14 @@ export function ArticleGrid({ articles }: { articles: Blog[] }) {
 | fetch単位のキャッシュ（Cache Componentsなし） | `fetch(url, { next: { revalidate, tags } })`。Next.js公式の「caching-without-cache-components」ガイドの方式 | **採用**。microCMS SDKの`customRequestInit`で渡せるため、`external/`層の中だけで完結する |
 
 ```ts
-// external/microcms/endpoints.ts（イメージ）
-export function buildCacheOptions(endpoint: MicroCMSEndpoint) {
-  return { next: { revalidate: 3600, tags: [endpoint] } };
+// external/microcms/endpoints.ts
+const REVALIDATE_SECONDS = 60 * 60; // 1時間
+
+export function buildCacheOptions(endpoint: MicrocmsEndpoint) {
+  return { next: { revalidate: REVALIDATE_SECONDS, tags: [endpoint] } };
 }
 
-// external/microcms/blogs.ts（イメージ）
+// external/microcms/blogs.ts
 export function getBlogList() {
   return microcmsClient.getAllContents<Blog>({
     endpoint: "blogs",

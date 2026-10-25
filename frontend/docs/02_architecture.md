@@ -19,13 +19,15 @@ features/   … 画面・機能単位のロジックとUIの司令塔
 external/   … 外部（microCMS）との接続点。差し替え可能にする
 ```
 
-### なぜこの3層にするか
+共通で使うコードは`shared/`に置く（`shared/lib/`に純粋関数・定数・環境変数の読み取り、`shared/components/`にページの枠組みや本文描画の部品）。依存の向きは`app/` → `features/` → `external/`・`shared/`を基本とする。ただし現状、`app/`のページは`external/`の取得関数も直接呼んでいる（固定ページは取得して表示するだけで、`features/`を挟む処理が無いため）。
 
-現状の実装（`app/page.tsx`が`ArticleGrid`を直接呼び、`ArticleGrid`がAPI Route経由でmicroCMSのデータをクライアント側でfetchする構成）には、以下の課題がある。
+### なぜこの3層にしたか
 
-1. `components/ArticleGrid.tsx`が「データ取得」と「表示」の両方を担っており、責務が混ざっている
-2. `app/api/blogs/route.ts`という内部API Routeを経由しているが、Server Componentなら`lib/microcms.ts`を直接呼べるため、このAPI Routeは実質不要な中継層になっている
-3. `lib`という名前だけでは「外部接続点」であることが伝わらない
+移行前の実装（`app/page.tsx`が`ArticleGrid`を直接呼び、`ArticleGrid`がAPI Route経由でmicroCMSのデータをクライアント側でfetchする構成）には、以下の課題があった。いずれも移行（[05_development_guide.md](./05_development_guide.md)のフェーズ0〜1）で解消済み。
+
+1. `components/ArticleGrid.tsx`が「データ取得」と「表示」の両方を担っており、責務が混ざっていた
+2. `app/api/blogs/route.ts`という内部API Routeを経由していたが、Server Componentなら`lib/microcms.ts`を直接呼べるため、このAPI Routeは実質不要な中継層になっていた
+3. `lib`という名前だけでは「外部接続点」であることが伝わらなかった
 
 これらを`external/microcms/`（外部接続点）と`features/*/`（機能単位のUI・ロジック）に分けることで、**フォルダ名を見るだけで責務がわかる**状態を目指す。これが参考記事の「意図的なレイヤー分離」の核心。
 

@@ -12,7 +12,9 @@
 ## スタイリング
 
 - Tailwind CSS v4（`@tailwindcss/postcss`）
-- daisyUI v5（現状`ArticleCard`等で`card`, `btn`等のクラスを使用）
+- `@tailwindcss/typography` — リッチエディタHTMLの本文スタイル（`prose`）。`shared/components/RichText.tsx`で使う
+- daisyUI v5（`light`テーマのみ。`btn`・`select`・`input`・`modal`・`tooltip`などのクラスを使用）
+- フォント: `next/font/google`の`Geist`・`Geist_Mono`（`app/layout.tsx`）
 - アイコン: アイコンライブラリ（`react-icons`等）は導入せず、必要なロゴ（シェアボタンのX・Facebook・はてなブックマーク等）はインラインSVGのコンポーネントとして持つ。使う数が少なく、依存を増やすほどではないため
 
 ## セキュリティ
@@ -31,8 +33,14 @@
 
 ## テスト
 
-- Vitest + `@testing-library/react` + `@testing-library/dom` + jsdom
+- Vitest 5（`environment: "jsdom"`）+ `@vitejs/plugin-react`
 - `vite-tsconfig-paths`でパスエイリアス（`@/*`）をテスト実行時にも解決
+- `@testing-library/react` / `@testing-library/dom`は導入済みだが、テスト方針（ロジックのみテストする）により現状のテストでは使っていない
+
+## CI / デプロイ
+
+- GitHub Actions（`.github/workflows/ci.yml`）— `main`へのpush時に、`frontend/`で`npm ci` → `lint` → `typecheck` → `test:run`を実行する。Node.jsのバージョンは`frontend/.nvmrc`から読む
+- Vercel — Root Directoryは`frontend`。本番URLは`https://www.kaizen-tech-blog.com`（ドメイン・DNSはCloudflare）
 
 ## Lint / Format
 

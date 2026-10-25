@@ -6,7 +6,9 @@
 
 ## 移行チェックリスト
 
-現状のコードから目標構成（[03_directory_structure.md](./03_directory_structure.md)）へ移行する際の推奨順序。**「構造を先に固めてから、中身（microCMSの拡張フィールドやデザインの作り込み）は後から」**という方針で進める。この間、サイドバーやカードは`docs/global_design/06_06_content_model.md`の拡張フィールドがまだ無い前提で、仮データ・仮スタイルで組んでおき、後続フェーズで本来のデータに差し替える。
+移行前のコードから現在の構成（[03_directory_structure.md](./03_directory_structure.md)）へ移行したときの順序の記録。**「構造を先に固めてから、中身（microCMSの拡張フィールドやデザインの作り込み）は後から」**という方針で進めた。この間、サイドバーやカードは`docs/global_design/06_content_model.md`の拡張フィールドがまだ無い前提で、仮データ・仮スタイルで組んでおき、後続フェーズで本来のデータに差し替えた。
+
+> フェーズ0〜4はすべて完了している。各項目の記述は実施当時の計画のまま残しており、その後に仕様を変えたものは項目内に注記している。現時点で残っている課題は末尾の「[残課題](#残課題)」を参照。
 
 ### フェーズ0: リポジトリ構成の変更（`frontend/`への移動）✅ 完了
 
@@ -42,7 +44,7 @@
    - `features/sidebar/` にAuthorCard / TopicsList / ArchiveList / SearchBoxを実装
    - TOPICS・ARCHIVEは記事データからの集計ロジックが必要（`external/microcms/blogs.ts`に集計用関数を追加するか、features内で計算するかは設計時に決める）
 6. **カテゴリフィルタ・検索・ページネーションの実装**
-   - まずはクライアント側フィルタ・ページ分割（案A）で実装し、動作確認後に必要であれば案B（URL `searchParams`でmicroCMSへ直接ページ取得）へ移行
+   - 当初はクライアント側フィルタ・ページ分割（案A）の予定だったが、全件取得＋`searchParams`に応じたサーバー側の絞り込み（案A'）で実装した（[04_data_fetching_policy.md](./04_data_fetching_policy.md)参照）
    - 件数表示（「◯件中 ◯〜◯件を表示」）・表示件数セレクト（10/20/30件）・ページ番号／前へ／次へを実装する（仕様は`docs/global_design/04_ui_design.md`の「5.2.1 ページネーション」を参照）
 7. **`/about` ページの新規作成**
 8. **`/profile` ページの新規作成**
@@ -89,12 +91,14 @@
 
 16. **スマホでのヘッダー表示**
     - `shared/components/layout/Header.tsx`を、スマホ・タブレットでは2段構成、PCでは1段にする。画面上部への固定はPCのみにする
+    - その後、スマホ・タブレットは「1段＋検索・メニューのダイアログ（`MobileMenu.tsx`）」に変更し、全幅で上部に固定する形にした。キャッチコピーはPCのみ表示
     - 仕様は`docs/global_design/04_ui_design.md`の「3.2 ヘッダー」を参照
 17. **エラー画面**
     - `app/error.tsx`（`"use client"`、`retry`で再試行）と、最小限の`app/global-error.tsx`を作る
     - 仕様は`docs/global_design/04_ui_design.md`の「8.7 エラー画面」を参照
 18. **ページ先頭へ戻るボタン**
     - `shared/components/layout/ScrollTopButton.tsx`（Client Component）を作り、`app/layout.tsx`に置く
+    - 当初はスクロール量が400pxを超えたら表示する仕様だったが、その後、常に表示する形に単純化した
     - 仕様は`docs/global_design/04_ui_design.md`の「3.5 ページ先頭へ戻るボタン」を参照
 19. **サーバー専用の保護と環境変数の検知**
     - `npm install server-only`
@@ -128,7 +132,7 @@ Claudeがコミットを作成する際は、**`git commit`を実行する前に
 
 ## コーディング規約（案）
 
-- import は `@/` エイリアスに統一する（現状`components/ArticleGrid.tsx`は相対パス、`app/blogs/[id]/page.tsx`は`@/`と混在している）
+- import は `@/` エイリアスを基本とする（現状、同じfeature・同じディレクトリ内の参照では`./ArticleCard`・`../lib/aggregate`のような相対パスも使っている）
 - `external/` 層はmicroCMS SDKへの依存をこの層の外に漏らさない（`features/`や`app/`からは`external/microcms/blogs.ts`が返す型だけを扱う）
 - Server Componentで完結できる処理に`"use client"`を安易に付けない。クライアント側の状態（開閉、フィルタ選択等）が必要な最小単位のみをクライアントコンポーネントに切り出す
 - 変数・プロパティ・型のフィールド名、およびURLの`searchParams`のキー名は略語を避け、名前だけで意味が伝わるようにする（例: 検索キーワードのURLパラメータ・変数名はどちらも`q`ではなく`keyword`、パース結果は`n`ではなく`parsed`のように書く。URLパラメータの一覧は[04_ui_design.md](../../docs/global_design/04_ui_design.md)5.5節を参照）
@@ -139,7 +143,7 @@ Claudeがコミットを作成する際は、**`git commit`を実行する前に
 
 **テスト範囲を絞る方針**を取る。デザイン・見た目に関するテスト（コンポーネントの表示内容やレイアウトの検証等）は基本的に書かない。**ロジック部分にのみテストコードを書く**。
 
-- 対象にする例: `external/microcms/`の関数（microCMS SDKへの呼び出し内容の検証）、シェアURLの組み立て（`features/blog-detail/lib/share-links.ts`。日本語や`&`・`#`を含むタイトルが正しくエンコードされるか等）、`getBlogDetail`の404判定、トップページのメタデータの組み立て、サニタイズの許可リスト、必須の環境変数の検知、Webhookの署名検証とタグ判定、サイトマップの項目の組み立て、データ変換・集計処理（将来追加するTOPICS/ARCHIVEの集計等）、条件分岐を含むユーティリティ関数（`ArticleGrid`の表示件数・`hasMore`判定のような、propsに応じて挙動が変わる部分等）
+- 対象にする例（いずれも`frontend/tests/`にあり）: `external/microcms/`の関数（microCMS SDKへの呼び出し内容の検証、`getBlogDetail`の404判定）、Webhookの署名検証とタグ判定、シェアURLの組み立て（日本語や`&`・`#`を含むタイトルが正しくエンコードされるか等）、サイトマップの項目の組み立て、絞り込み・ページ分割・URLパラメータの解釈、トップページの見出し・メタデータの組み立て、カテゴリー・アーカイブの集計、カード配色の導出、新着判定・日付の整形、サニタイズの許可リスト、必須の環境変数の検知、並び替え
 - 対象にしない例: コンポーネントの見た目・レイアウトの検証、単純にpropsをそのまま表示するだけのコンポーネントのレンダリングテスト
 - CIを通すための「最初の1件」も、デザイン寄りのテストではなくロジックのテスト（例: `external/microcms/blogs.ts`が正しいエンドポイント・パラメータでSDKを呼んでいるかの検証）にする
 - 既存の`npm run test` / `npm run test:run`（vitest）をそのまま利用する
@@ -152,3 +156,16 @@ Claudeがコミットを作成する際は、**`git commit`を実行する前に
 - `external/microcms/types.ts`の型と`features/`側で使う型を分け、DTO変換を通す
 
 MVPの現段階では、まず[03_directory_structure.md](./03_directory_structure.md)のレイヤー分離を守ることを優先し、仕組み化は必要になったタイミングで導入する。
+
+## 残課題
+
+ドキュメントを最新化した際（2026-10）に、設計とコードの食い違いや、使われていないコードとして見つかったもの。対応はコードの変更を伴うため、ここでは一覧に留める。
+
+| # | 内容 | 該当箇所 | 関連する設計 |
+|---|---|---|---|
+| 1 | マニフェストのアイコンのパスが実ファイルと一致していない（`/icons/icon-192x192.png`・`/icons/icon-512x512.png`を参照しているが、実ファイルは`icon-192.png`・`icon-512.png`）。`maskable`のアイコン（`icon-maskable-512.png`）も登録されていない | `src/app/manifest.ts` | global_design/04の12.2 |
+| 2 | サイトマップのURLを`buildAbsoluteUrl`ではなく`process.env.SITE_URL`の直接連結で作っている。`SITE_URL`が未設定でもエラーにならず、`undefined/blogs/…`のURLになる | `src/app/sitemap.ts` | global_design/04の10.2 |
+| 3 | 著者カードにSNSアイコン（`snsLinks`）を表示していない。型とmicroCMSのフィールドは用意済み | `src/features/sidebar/components/AuthorCard.tsx` | global_design/02のUC-PROFILE-OpenSns、04の5.4 |
+| 4 | 記事の並び順を指定していない。`getBlogList`は`orders`を渡さず、`sortByPublishedAtDesc`も呼ばれていないため、並び順はmicroCMSの既定の順序に依存している | `src/external/microcms/blogs.ts`、`src/shared/lib/sort-article.ts` | global_design/02の検索・絞り込み仕様（公開日の降順） |
+| 5 | `globals.css`の`body`に`font-family: Arial, Helvetica, sans-serif`が残っており、`next/font`で読み込んだGeistが本文に効いていない | `src/app/globals.css` | global_design/04の4章 |
+| 6 | 使われていないコード: `shared/lib/types.ts`の`Article`型、`constants.ts`の`FALLBACK_THUMBNAIL`、`external/microcms/types.ts`の`CATEGORIES`。あわせて`next.config.ts`の`pbs.twimg.com`（`FALLBACK_THUMBNAIL`用）も不要になっている可能性がある | 各ファイル | — |
