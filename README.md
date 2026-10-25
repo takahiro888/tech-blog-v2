@@ -1,11 +1,18 @@
 # KAIZEN 技術ブログ（tech-blog-v2）
 
-> つくって、試して、わかったこと。Web開発の学びをここに。
+Next.js（App Router）と TypeScriptとmicroCMS で作っている個人の技術ブログです。
 
-Next.js（App Router）と microCMS で作っている個人の技術ブログです。
-
-- 本番: https://www.kaizen-tech-blog.com
 <img width="1400" height="788" alt="image" src="https://github.com/user-attachments/assets/81dca98b-4ba3-46b3-84f9-79c2bc920463" />
+
+
+
+サービスURL： https://www.kaizen-tech-blog.com
+
+
+## 詳細
+こちらの記事で紹介しています。
+
+https://qiita.com/takahiro_honda/items/19f15f755afbd922afe7
 
 ## このプロジェクトについて
 
@@ -18,6 +25,7 @@ Next.js（App Router）と microCMS で作っている個人の技術ブログ�
 設計の参考:
 
 - [Next.js App Router アーキテクチャの設計思想](https://zenn.dev/yukionishi/articles/cd79e39ea6c172)
+
 
 ## 主な機能
 
