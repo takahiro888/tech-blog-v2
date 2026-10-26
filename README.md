@@ -2,9 +2,7 @@
 
 Next.js（App Router）と TypeScriptとmicroCMS で作っている個人の技術ブログです。
 
-<img width="1400" height="788" alt="image" src="https://github.com/user-attachments/assets/81dca98b-4ba3-46b3-84f9-79c2bc920463" />
-
-
+<img width="1400" height="788" alt="image" src="https://github.com/user-attachments/assets/61bbe07b-eb6f-4df9-abe2-a3096d99a54a" />
 
 サービスURL： https://www.kaizen-tech-blog.com
 
